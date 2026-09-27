@@ -1,0 +1,29 @@
+{
+  "imager": {
+    "latest_version": "1.0.0",
+    "url": "https://gleem.gg",
+    "devices": [
+      {
+        "name": "Orange Pi 5 Plus",
+        "tags": ["opi5plus"],
+        "icon": "https://get.gleem.gg/imager/icons/orangepi5-plus.png",
+        "description": "Rockchip RK3588 with HDMI input",
+        "matching_type": "exclusive",
+        "capabilities": []
+      }
+    ]
+  },
+  "os_list": [
+    {
+      "name": "Gleem IRL",
+      "description": "IRL streaming with SRTLA2 bonding, remote control from gleem.gg and self-updates",
+      "icon": "https://get.gleem.gg/imager/icons/gleem-irl.png",
+      "url": "https://get.gleem.gg/irl/orangepi5-plus/v2026.09.27/Armbian_26.8.2_Orangepi5-plus_trixie_vendor_6.1.115_minimal.img.xz",
+      "extract_size": 2919235584,
+      "extract_sha256": "62d84b78f229bc0d53eabceeb92d15f279c28f7d4d82548a8a61c4a7874e5124",
+      "image_download_size": 510768640,
+      "release_date": "2026-09-27",
+      "devices": ["opi5plus"]
+    }
+  ]
+}

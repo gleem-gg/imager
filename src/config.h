@@ -8,19 +8,20 @@
 
 
 /* Repository URL */
-#define OSLIST_URL                              "https://downloads.raspberrypi.com/os_list_imagingutility_v4.json"
+#define OSLIST_URL                              "https://get.gleem.gg/imager/os_list.json"
 
 /* Custom repository manifest file extension (without leading dot) */
-#define MANIFEST_EXTENSION                      "rpi-imager-manifest"
+#define MANIFEST_EXTENSION                      "gleem-imager-manifest"
 
 /* MIME type for manifest files */
-#define MANIFEST_MIME_TYPE                      "application/vnd.raspberrypi.imager-manifest+json"
+#define MANIFEST_MIME_TYPE                      "application/vnd.gleem.imager-manifest+json"
 
 /* Time synchronization URL (only used on linuxfb QPA platform, URL must be HTTP) */
-#define TIME_URL                                "http://downloads.raspberrypi.com/"
+#define TIME_URL                                "http://get.gleem.gg/"
 
-/* Phone home the name of images downloaded for image popularity ranking */
-#define TELEMETRY_URL                           "https://rpi-imager-stats.raspberrypi.com/downloads"
+/* Gleem Imager sends no telemetry: ENABLE_TELEMETRY is off by default and
+ * this address receives nothing. Kept only so the code that uses it compiles. */
+#define TELEMETRY_URL                           ""
 
 /* Hash algorithm for verifying (uncompressed image) checksum */
 #define OSLIST_HASH_ALGORITHM                   QCryptographicHash::Sha256
