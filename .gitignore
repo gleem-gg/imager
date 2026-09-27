@@ -25,7 +25,7 @@ debian/files
 debian/*.substvars
 debian/debhelper**
 debian/tmp
-debian/com.raspberrypi.rpi-imager.metainfo.xml
+debian/gg.gleem.imager.metainfo.xml
 
 # macOS
 .DS_Store
