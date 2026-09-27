@@ -110,6 +110,14 @@ jobs:
           cmake --build build --parallel
           cmake --build build --target inno_installer
 
+      - name: Tracked files the build changed
+        if: always()
+        shell: bash
+        run: |
+          git status --porcelain
+          git diff --stat
+          git describe --tags --always --dirty --match "gleem-v[0-9]*"
+
       - uses: actions/upload-artifact@v4
         with:
           name: windows
