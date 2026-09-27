@@ -38,3 +38,14 @@ works the same way (see [BUILDING.md](BUILDING.md)), and the binary is called
 
 `main` tracks `raspberrypi/rpi-imager`; the Gleem changes live on `gleem`.
 Merge `main` into `gleem` to pick up upstream fixes.
+
+## Releasing
+
+1. Tag `gleem-vX.Y.Z` on `gleem` and push the tag. CI builds the Windows
+   installer (unsigned) and the Linux AppImage.
+2. With the code-signing token plugged in, run
+   `PKCS11_MODULE=/path/to/token-pkcs11.so gleem/release.sh gleem-vX.Y.Z`.
+   It signs the installer, verifies it and publishes both to
+   `get.gleem.gg/imager/vX.Y.Z/`, moving `imager/latest` last.
+3. Raise `imager.latest_version` in `gleem/os_list.json` so running copies
+   offer the update; pushing that publishes the list.

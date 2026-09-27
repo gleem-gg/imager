@@ -1,15 +1,13 @@
-# Builds Gleem Imager for Windows and Linux, and publishes to get.gleem.gg.
+# Builds Gleem Imager for Windows and Linux.
 #
-# - Every push to `gleem` and every pull request builds both and keeps the
-#   results as workflow artifacts.
-# - A `gleem-vX.Y.Z` tag also publishes them to
-#   https://get.gleem.gg/imager/vX.Y.Z/ and moves `imager/latest` there.
-# - A push to `gleem` that changes gleem/ publishes the OS list and its icons
-#   to https://get.gleem.gg/imager/.
+# - Every push to `gleem`, every `gleem-vX.Y.Z` tag and every pull request
+#   builds both and keeps them as workflow artifacts. The Windows installer is
+#   unsigned: the code-signing key is on a USB token, so gleem/release.sh signs
+#   it on a machine with the token and publishes the release from there.
+# - A push to `gleem` that changes gleem/os_list.json or gleem/icons/ publishes the image list and its
+#   icons to https://get.gleem.gg/imager/.
 #
-# Secrets: BUNNY_STORAGE_PASSWORD (storage zone gleem-cli only). Windows
-# signing is optional: WINDOWS_CERT_PFX (base64 of the .pfx) and
-# WINDOWS_CERT_PASSWORD; without them the installer is built unsigned.
+# Secret: BUNNY_STORAGE_PASSWORD (storage zone gleem-cli only).
 name: Gleem Imager
 
 on:
@@ -81,21 +79,6 @@ jobs:
       - name: Inno Setup
         run: choco install innosetup --no-progress -y
 
-      - name: Import the signing certificate
-        id: cert
-        shell: pwsh
-        env:
-          PFX: ${{ secrets.WINDOWS_CERT_PFX }}
-          PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
-        run: |
-          if (-not $env:PFX) { "signed=OFF" >> $env:GITHUB_OUTPUT; exit 0 }
-          $path = Join-Path $env:RUNNER_TEMP cert.pfx
-          [IO.File]::WriteAllBytes($path, [Convert]::FromBase64String($env:PFX))
-          $secure = ConvertTo-SecureString $env:PASSWORD -AsPlainText -Force
-          Import-PfxCertificate -FilePath $path -CertStoreLocation Cert:\CurrentUser\My -Password $secure | Out-Null
-          Remove-Item $path
-          "signed=ON" >> $env:GITHUB_OUTPUT
-
       - name: Build
         shell: pwsh
         run: |
@@ -103,7 +86,7 @@ jobs:
           $env:PATH = "$mingw\bin;$env:PATH"
           cmake -S src -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
             -DQt6_ROOT="$env:QT_ROOT_DIR" -DMINGW64_ROOT="$mingw" `
-            -DENABLE_INNO_INSTALLER=ON -DIMAGER_SIGNED_APP=${{ steps.cert.outputs.signed }}
+            -DENABLE_INNO_INSTALLER=ON
           cmake --build build --parallel
           cmake --build build --target inno_installer
 
@@ -112,40 +95,6 @@ jobs:
           name: windows
           path: build/installer/gleem-imager-*.exe
           if-no-files-found: error
-
-  publish:
-    name: Publish to get.gleem.gg
-    if: startsWith(github.ref, 'refs/tags/gleem-v')
-    needs: [linux, windows]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          merge-multiple: true
-
-      - name: Upload
-        env:
-          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
-          TAG: ${{ github.ref_name }}
-        run: |
-          set -euo pipefail
-          version="${TAG#gleem-}"
-          storage="https://storage.bunnycdn.com/gleem-cli/imager"
-          put() {
-            curl -fsS -X PUT -H "AccessKey: $BUNNY_STORAGE_PASSWORD" \
-              -H "Content-Type: application/octet-stream" --data-binary @"$1" "$storage/$2"
-            echo "  $2"
-          }
-          # A published version is never replaced: files are cached for 30 days.
-          if curl -fsS -H "AccessKey: $BUNNY_STORAGE_PASSWORD" "$storage/$version/" | grep -q '"ObjectName"'; then
-            echo "$version is already published" >&2; exit 1
-          fi
-          cd dist
-          sha256sum * > SHA256SUMS
-          for f in *; do put "$f" "$version/$f"; done
-          printf '%s\n' "$version" > latest
-          put latest latest
 
   oslist:
     name: Publish the OS list
@@ -159,7 +108,7 @@ jobs:
       - name: Changed?
         id: changed
         run: |
-          if git diff --quiet HEAD^ HEAD -- gleem/; then echo "publish=no" >> "$GITHUB_OUTPUT"; else echo "publish=yes" >> "$GITHUB_OUTPUT"; fi
+          if git diff --quiet HEAD^ HEAD -- gleem/os_list.json gleem/icons/; then echo "publish=no" >> "$GITHUB_OUTPUT"; else echo "publish=yes" >> "$GITHUB_OUTPUT"; fi
 
       - name: Validate against the schema
         if: steps.changed.outputs.publish == 'yes'
