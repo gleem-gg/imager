@@ -73,6 +73,11 @@ jobs:
           version: ${{ env.QT_VERSION }}
           arch: win64_mingw
           tools: tools_mingw1310
+          # Qt 6.11 moved each Windows toolchain into its own repository
+          # folder (qt6_6111_mingw/ ...), which aqtinstall 3.3.0 cannot read yet.
+          # Pinned to a main-branch commit that can; back to a release once
+          # one supports it.
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@076e1659807d0b362a3ed684d54c2e9c775eb9c7
           modules: qtimageformats
           cache: true
 
@@ -98,17 +103,28 @@ jobs:
 
   oslist:
     name: Publish the OS list
-    if: github.event_name == 'push' && github.ref == 'refs/heads/gleem'
+    # On a manual run it always publishes (no "before" to compare with).
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/gleem'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Changed?
         id: changed
+        env:
+          BEFORE: ${{ github.event.before }}
         run: |
-          if git diff --quiet HEAD^ HEAD -- gleem/os_list.json gleem/icons/; then echo "publish=no" >> "$GITHUB_OUTPUT"; else echo "publish=yes" >> "$GITHUB_OUTPUT"; fi
+          # Compare with what the branch pointed at before this push, which may
+          # be several commits back; a new branch has no "before" (all zeros).
+          if [[ "$BEFORE" =~ ^0+$ ]] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "publish=yes" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "$BEFORE" HEAD -- gleem/os_list.json gleem/icons/; then
+            echo "publish=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=yes" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Validate against the schema
         if: steps.changed.outputs.publish == 'yes'
