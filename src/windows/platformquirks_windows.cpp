@@ -310,7 +310,7 @@ void applyQuirks() {
     HANDLE hMutex = CreateMutexW(nullptr, TRUE, L"Global\\RaspberryPiImagerMutex");
     if (GetLastError() == ERROR_ALREADY_EXISTS) {
         // Another instance running
-        MessageBoxW(nullptr, L"Raspberry Pi Imager is already running.", L"Raspberry Pi Imager", MB_OK | MB_ICONINFORMATION);
+        MessageBoxW(nullptr, L"Gleem Imager is already running.", L"Gleem Imager", MB_OK | MB_ICONINFORMATION);
         exit(0);
     }
 }
@@ -532,7 +532,7 @@ bool openUrlExternally(const QUrl& url) {
 }
 
 bool registerUriScheme() {
-    // The rpi-imager:// scheme association is written to the registry by the
+    // The gleem-imager:// scheme association is written to the registry by the
     // installer at install time, so there is nothing to do at runtime.
     return true;
 }

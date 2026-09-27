@@ -3,7 +3,7 @@
 //
 // What the callback relay accepts from the shell.
 //
-// The relay is registered as the handler for rpi-imager:// links, so the
+// The relay is registered as the handler for gleem-imager:// links, so the
 // string it is started with comes from whatever a browser or another
 // application asked Windows to open. Everything it does afterwards -- a TCP
 // send to the running instance, or launching one with the URL as an argument
@@ -19,9 +19,9 @@
 namespace rpi_relay {
 
 // The scheme the relay is registered for, and the bounds either side of it.
-inline constexpr wchar_t kScheme[] = L"rpi-imager://";
+inline constexpr wchar_t kScheme[] = L"gleem-imager://";
 inline constexpr size_t kSchemeLen = 13;  // wcslen(kScheme)
-inline constexpr size_t kMinUrlLen = 14;  // rpi-imager:// plus one character
+inline constexpr size_t kMinUrlLen = 16;  // gleem-imager:// plus one character
 inline constexpr size_t kMaxUrlLen = 2000;
 
 // The URL argument, unquoted, copied into `out`.
@@ -82,7 +82,7 @@ inline bool extractUrl(const wchar_t *cmdLine, const wchar_t *fullCommandLine,
 //
 // A control character is refused outright rather than escaped: the string is
 // about to be handed to ShellExecuteExW as a parameter, and there is no
-// legitimate rpi-imager:// link that carries one.
+// legitimate gleem-imager:// link that carries one.
 inline bool isAcceptableUrl(const wchar_t *url)
 {
     if (!url)
