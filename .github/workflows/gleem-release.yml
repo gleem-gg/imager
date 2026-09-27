@@ -64,9 +64,24 @@ jobs:
     name: Windows installer
     runs-on: windows-2022
     steps:
+      # A few upstream files are stored with CRLF line endings. With the
+      # runner's autocrlf they show as modified after checkout, and the
+      # version comes out as vX.Y.Z-dirty.
+      - name: Check out files exactly as committed
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: The tree must be clean
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git status --porcelain
+            echo "::error::the checkout is not clean, the version would be -dirty"
+            exit 1
+          fi
 
       - uses: jurplel/install-qt-action@v4
         with:
