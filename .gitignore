@@ -80,3 +80,6 @@ qt/language_filters.json
 # run leaves a couple of hundred untracked files behind -- enough to bury a
 # real change in `git status`.
 *.gcov
+
+# Written by aqtinstall (install-qt-action) during CI.
+aqtinstall.log
