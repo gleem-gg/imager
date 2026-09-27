@@ -282,7 +282,7 @@ TEST_CASE("The session manager is asked to stop both sleeping and idling",
 
     // Named, because the session manager shows the user what is holding the
     // machine awake and "unknown application" is not something they can act on.
-    CHECK(inhibit.contains(QLatin1String("app=Raspberry Pi Imager")));
+    CHECK(inhibit.contains(QLatin1String("app=Gleem Imager")));
     CHECK(inhibit.contains(QLatin1String("reason=Imaging")));
 }
 

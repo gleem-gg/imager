@@ -468,7 +468,7 @@ public:
     Q_INVOKABLE bool customRepo();
     Q_INVOKABLE QString customRepoHost();
     
-    /* Validate if a string is a valid repository URL (http/https ending with .json or .rpi-imager-manifest) */
+    /* Validate if a string is a valid repository URL (http/https ending with .json or .gleem-imager-manifest) */
     Q_INVOKABLE bool isValidRepoUrl(const QString &url) const;
     
     // Secure Boot CLI override

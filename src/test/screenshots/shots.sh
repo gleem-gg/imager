@@ -233,7 +233,7 @@ while read -r page mode published extra; do
     app_home=$work/$page.home
     mkdir -p "$app_home/config/Raspberry Pi"
     printf '[General]\ntextScaleFactor=1\n' \
-        > "$app_home/config/Raspberry Pi/Raspberry Pi Imager.conf"
+        > "$app_home/config/Raspberry Pi/Gleem Imager.conf"
     app_env+=(
         "HOME=$app_home"
         "XDG_CONFIG_HOME=$app_home/config"

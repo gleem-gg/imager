@@ -4303,7 +4303,7 @@ TEST_CASE("A source file that vanished before the write starts is reported",
 // ══════════════════════════════════════════════════════════════
 // URLs arriving from outside the application
 //
-// handleIncomingUrl() is the rpi-imager:// scheme handler: a link somebody
+// handleIncomingUrl() is the gleem-imager:// scheme handler: a link somebody
 // clicks, or a hand-off from another application. It can point the OS list
 // at a different repository and carry a Connect token, so what it accepts
 // decides which images the user is offered and which organisation a device
@@ -4319,7 +4319,7 @@ TEST_CASE("A well-formed repository URL is accepted", "[imagewriter][url]")
                      [&accepted](QString u) { accepted << u; });
 
     w.handleIncomingUrl(QUrl(QStringLiteral(
-        "rpi-imager://open?repo=https://example.com/os_list.json")));
+        "gleem-imager://open?repo=https://example.com/os_list.json")));
 
     INFO("accepted: " << accepted.join(QStringLiteral(", ")).toStdString());
     CHECK(accepted.size() == 1);
@@ -4336,14 +4336,14 @@ TEST_CASE("Repository URLs that are not http(s) JSON are refused",
                      [&accepted](QString u) { accepted << u; });
 
     const QStringList hostile = {
-        QStringLiteral("rpi-imager://open?repo=file:///etc/passwd"),
-        QStringLiteral("rpi-imager://open?repo=javascript:alert(1)"),
-        QStringLiteral("rpi-imager://open?repo=ftp://example.com/os_list.json"),
+        QStringLiteral("gleem-imager://open?repo=file:///etc/passwd"),
+        QStringLiteral("gleem-imager://open?repo=javascript:alert(1)"),
+        QStringLiteral("gleem-imager://open?repo=ftp://example.com/os_list.json"),
         // Right scheme, but not a manifest.
-        QStringLiteral("rpi-imager://open?repo=https://example.com/payload.sh"),
-        QStringLiteral("rpi-imager://open?repo=https://example.com/"),
+        QStringLiteral("gleem-imager://open?repo=https://example.com/payload.sh"),
+        QStringLiteral("gleem-imager://open?repo=https://example.com/"),
         // Whitespace smuggling.
-        QStringLiteral("rpi-imager://open?repo=https://example.com/a.json%20extra"),
+        QStringLiteral("gleem-imager://open?repo=https://example.com/a.json%20extra"),
     };
 
     for (const QString &u : hostile) {
@@ -4366,7 +4366,7 @@ TEST_CASE("A repository URL with a query or fragment is still accepted",
                      [&accepted](QString u) { accepted << u; });
 
     w.handleIncomingUrl(QUrl(QStringLiteral(
-        "rpi-imager://open?repo=https://example.com/os_list.json%3Fv%3D2")));
+        "gleem-imager://open?repo=https://example.com/os_list.json%3Fv%3D2")));
 
     INFO("accepted: " << accepted.join(QStringLiteral(", ")).toStdString());
     CHECK(accepted.size() == 1);
@@ -4381,7 +4381,7 @@ TEST_CASE("A URL carrying nothing of interest is ignored", "[imagewriter][url]")
     QObject::connect(&w, &ImageWriter::connectTokenConflictDetected,
                      [&emitted](QString) { ++emitted; });
 
-    CHECK_NOTHROW(w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open"))));
+    CHECK_NOTHROW(w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open"))));
     CHECK_NOTHROW(w.handleIncomingUrl(QUrl()));
     CHECK(emitted == 0);
 }
@@ -6166,7 +6166,7 @@ TEST_CASE("A trailing newline does not sneak a repo URL through", "[imagewriter]
     // before a final newline -- which is how issue #1687 got in. The pattern
     // is anchored with \A..\z for exactly this.
     w.handleIncomingUrl(QUrl(QStringLiteral(
-        "rpi-imager://open?repo=https%3A%2F%2Fexample.com%2Flist.json%0A")));
+        "gleem-imager://open?repo=https%3A%2F%2Fexample.com%2Flist.json%0A")));
 
     CHECK(repos.isEmpty());
 }
@@ -6178,7 +6178,7 @@ TEST_CASE("A well-formed auth key is accepted", "[imagewriter][url]")
 
     // rpuak_ followed by 24 Base58 characters is the shape Connect issues.
     const QString key = QStringLiteral("rpuak_123456789ABCDEFGHJKLMNPQ");
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=") + key));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=") + key));
 
     CHECK(w.getRuntimeConnectToken() == key);
     w.clearConnectToken();
@@ -6198,7 +6198,7 @@ TEST_CASE("A malformed auth key is ignored", "[imagewriter][url]")
     for (const QString &bad : rejected) {
         INFO("candidate: " << bad.toStdString());
         w.clearConnectToken();
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=")
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=")
                                  + QUrl::toPercentEncoding(bad)));
         CHECK(w.getRuntimeConnectToken().isEmpty());
     }
@@ -6213,11 +6213,11 @@ TEST_CASE("A second, different auth key raises a conflict", "[imagewriter][url]"
     const QString first = QStringLiteral("rpuak_123456789ABCDEFGHJKLMNPQ");
     const QString second = QStringLiteral("rpuak_987654321ABCDEFGHJKLMNPQ");
 
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=") + first));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=") + first));
     REQUIRE(w.getRuntimeConnectToken() == first);
 
     rpi_test::SignalLog conflicts(&w, &ImageWriter::connectTokenConflictDetected);
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=") + second));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=") + second));
 
     // Replacing it silently would enrol the next card into a different
     // account than the one the user set up. QML gets to ask.
@@ -6234,13 +6234,13 @@ TEST_CASE("The same auth key arriving twice is not a conflict", "[imagewriter][u
     w.clearConnectToken();
 
     const QString key = QStringLiteral("rpuak_123456789ABCDEFGHJKLMNPQ");
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=") + key));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=") + key));
     REQUIRE(w.getRuntimeConnectToken() == key);
 
     // Following the same link again is ordinary; prompting for it would be
     // noise.
     rpi_test::SignalLog conflicts(&w, &ImageWriter::connectTokenConflictDetected);
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://open?auth_key=") + key));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://open?auth_key=") + key));
 
     CHECK(conflicts.isEmpty());
     CHECK(w.getRuntimeConnectToken() == key);
@@ -10311,14 +10311,14 @@ TEST_CASE("A deep link's token is taken only when it is well formed",
     rpi_test::SignalLog received(&w, &ImageWriter::connectTokenReceived);
 
     SECTION("a good token is accepted and reported") {
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=") + good));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=") + good));
 
         REQUIRE(received.count() == 1);
         CHECK(received.at(0).at(0).toString() == good);
     }
 
     SECTION("other query parameters do not confuse it") {
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?state=x&auth_key=")
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?state=x&auth_key=")
                                  + good + QStringLiteral("&next=y")));
 
         REQUIRE(received.count() == 1);
@@ -10326,10 +10326,10 @@ TEST_CASE("A deep link's token is taken only when it is well formed",
     }
 
     SECTION("a malformed token is dropped rather than passed on") {
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=nonsense")));
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=rpuak_short")));
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=")));
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect")));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=nonsense")));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=rpuak_short")));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=")));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect")));
 
         CHECK(received.count() == 0);
     }
@@ -10349,11 +10349,11 @@ TEST_CASE("A second deep link does not silently replace the token in use",
     rpi_test::SignalLog received(&w, &ImageWriter::connectTokenReceived);
     rpi_test::SignalLog conflicts(&w, &ImageWriter::connectTokenConflictDetected);
 
-    w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=") + first));
+    w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=") + first));
     REQUIRE(received.count() == 1);
 
     SECTION("a different token is reported as a conflict, not adopted") {
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=") + second));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=") + second));
 
         REQUIRE(conflicts.count() == 1);
         CHECK(conflicts.at(0).at(0).toString() == second);
@@ -10365,7 +10365,7 @@ TEST_CASE("A second deep link does not silently replace the token in use",
 
     SECTION("the same token again is not a conflict") {
         // A link opened twice is not a disagreement about anything.
-        w.handleIncomingUrl(QUrl(QStringLiteral("rpi-imager://connect?auth_key=") + first));
+        w.handleIncomingUrl(QUrl(QStringLiteral("gleem-imager://connect?auth_key=") + first));
 
         CHECK(conflicts.count() == 0);
         CHECK(received.count() == 1);
@@ -10386,7 +10386,7 @@ TEST_CASE("A deep link's repository is taken only when it is well formed",
 
     SECTION("a good repository comes through") {
         w.handleIncomingUrl(QUrl(QStringLiteral(
-            "rpi-imager://open?repo=https://example.com/os_list.json")));
+            "gleem-imager://open?repo=https://example.com/os_list.json")));
 
         REQUIRE(repos.count() == 1);
         CHECK(repos.at(0).at(0).toString()
@@ -10395,16 +10395,16 @@ TEST_CASE("A deep link's repository is taken only when it is well formed",
 
     SECTION("a newline-suffixed repository is ignored") {
         w.handleIncomingUrl(QUrl(QStringLiteral(
-            "rpi-imager://open?repo=https://example.com/os_list.json%0A")));
+            "gleem-imager://open?repo=https://example.com/os_list.json%0A")));
 
         CHECK(repos.count() == 0);
     }
 
     SECTION("a repository that is not a list is ignored") {
         w.handleIncomingUrl(QUrl(QStringLiteral(
-            "rpi-imager://open?repo=file:///etc/passwd.json")));
+            "gleem-imager://open?repo=file:///etc/passwd.json")));
         w.handleIncomingUrl(QUrl(QStringLiteral(
-            "rpi-imager://open?repo=https://example.com/evil?x=.json")));
+            "gleem-imager://open?repo=https://example.com/evil?x=.json")));
 
         CHECK(repos.count() == 0);
     }
@@ -11707,7 +11707,7 @@ TEST_CASE("A file the user already owns is narrowed without ceremony",
 // Handing back everything else an elevated run leaves behind.
 //
 // The settings file is not the only thing. An elevated Imager writes the
-// rpi-imager:// handler into ~/.local/share/applications, has
+// gleem-imager:// handler into ~/.local/share/applications, has
 // update-desktop-database rewrite mimeinfo.cache and xdg-mime rewrite
 // mimeapps.list, and fills a cache tree under ~/.cache -- all as root, all
 // in a directory belonging to somebody else. On the machine this was written
@@ -13409,7 +13409,7 @@ TEST_CASE("Every role the chooser binds to has the name QML uses",
 // ══════════════════════════════════════════════════════════════
 // A link handed over from a second launch
 //
-// Clicking an rpi-imager:// link when Imager is already running does not
+// Clicking an gleem-imager:// link when Imager is already running does not
 // start a second copy: the new process hands the URL to the running one over
 // D-Bus and exits. That is how the Raspberry Pi Connect sign-in callback gets
 // back to the window the user started from, so if the hand-off stops here,
@@ -13434,7 +13434,7 @@ TEST_CASE("A link handed over D-Bus reaches the running Imager",
     UriHandlerAdaptor adaptor(&w, &owner);
 
     adaptor.HandleUrl(QStringLiteral(
-        "rpi-imager://open?repo=https://example.com/os_list.json"));
+        "gleem-imager://open?repo=https://example.com/os_list.json"));
 
     // Handed over rather than run where it arrived. A D-Bus call is delivered
     // on whichever thread the connection is serviced from, and reaching into
@@ -13461,7 +13461,7 @@ TEST_CASE("A link over D-Bus is passed on exactly as it arrived",
     QObject owner;
     UriHandlerAdaptor adaptor(&w, &owner);
     adaptor.HandleUrl(QStringLiteral(
-        "rpi-imager://open?repo=https://example.com/os_list.json%3Fv%3D2"));
+        "gleem-imager://open?repo=https://example.com/os_list.json%3Fv%3D2"));
     QCoreApplication::processEvents();
 
     REQUIRE(accepted.size() == 1);
@@ -13488,8 +13488,8 @@ TEST_CASE("A D-Bus caller sending nonsense is ignored, not obeyed",
         QString(),
         QStringLiteral("not a url at all"),
         QStringLiteral("file:///etc/passwd"),
-        QStringLiteral("rpi-imager://open?repo=file:///etc/passwd"),
-        QStringLiteral("rpi-imager://open"),
+        QStringLiteral("gleem-imager://open?repo=file:///etc/passwd"),
+        QStringLiteral("gleem-imager://open"),
     };
     for (const QString &s : junk) {
         INFO("sent: " << s.toStdString());

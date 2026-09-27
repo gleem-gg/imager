@@ -4,13 +4,13 @@
 #   mode          jump, or write for a page that only exists during a real write
 #   published-as  basename this page is published under, or - if it is not
 #
-# The published names are the ones debian/com.raspberrypi.rpi-imager.metainfo.xml.in
-# points at under downloads.raspberrypi.org/imager/.
+# Gleem Imager publishes no screenshots yet, so every page is "-"; its
+# metainfo (debian/gg.gleem.imager.metainfo.xml.in) points at none.
 #
 # page                     mode   published-as
-DeviceSelection            jump   IMAGING-UTILITY-MAIN
-OSSelection                jump   IMAGING-UTILITY-OS
-StorageSelection           jump   IMAGING-UTILITY-SD
+DeviceSelection            jump   -
+OSSelection                jump   -
+StorageSelection           jump   -
 HostnameCustomization      jump   -
 LocaleCustomization        jump   -
 UserCustomization          jump   -
@@ -19,5 +19,5 @@ RemoteAccess               jump   -
 SecureBootCustomization    jump   -
 PiConnectCustomization     jump   -
 IfAndFeatures              jump   -
-Writing                    write  IMAGING-UTILITY-WRITE
-Done                       write  IMAGING-UTILITY-DONE
+Writing                    write  -
+Done                       write  -

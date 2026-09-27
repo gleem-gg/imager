@@ -37,7 +37,7 @@ SettingsPermissions secureSettingsFile(const QString& path);
  * recursing into a directory.
  *
  * The settings file is not the only thing this happens to. An elevated
- * Imager writes the rpi-imager:// handler into the user's
+ * Imager writes the gleem-imager:// handler into the user's
  * ~/.local/share/applications, has update-desktop-database rewrite
  * mimeinfo.cache and xdg-mime rewrite mimeapps.list, and fills a cache tree
  * under ~/.cache -- all as root, all in a directory that belongs to somebody

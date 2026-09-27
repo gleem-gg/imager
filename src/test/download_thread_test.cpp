@@ -1196,7 +1196,7 @@ TEST_CASE("A device node that has gone is reported, not waited on",
 // fetcher restricts what a redirect may switch to; the image download leaves
 // it to libcurl's default, which excludes file, scp and smb. That difference
 // is easy to lose sight of, and what it protects is worth stating: a
-// repository, or an rpi-imager:// link somebody accepted, chooses the image
+// repository, or an gleem-imager:// link somebody accepted, chooses the image
 // URL, and a redirect from it into file:// would have the writer read a local
 // file and put it on the card.
 

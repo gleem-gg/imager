@@ -97,8 +97,8 @@ BaseDialog {
             ImRadioButton {
                 id: radioOfficial
                 objectName: "repoOfficialRadio"
-                text: "Raspberry Pi (default)"
-                accessibleDescription: qsTr("Use the official Raspberry Pi operating system repository")
+                text: "Gleem (default)"
+                accessibleDescription: qsTr("Use the official Gleem image repository")
                 checked: true
                 ButtonGroup.group: repoGroup
                 Layout.fillWidth: true  // Enable text wrapping for long translations

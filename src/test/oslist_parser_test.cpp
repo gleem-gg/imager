@@ -286,7 +286,7 @@ TEST_CASE("A file icon naming a host is dropped", "[oslist][icon]")
 {
     // The one this function exists for. A repository is not necessarily
     // trusted -- it can arrive from --repo, from the repository dialog, or
-    // from an rpi-imager:// link somebody was persuaded to accept -- and
+    // from an gleem-imager:// link somebody was persuaded to accept -- and
     // file://host/share/icon.png becomes the UNC path //host/share/icon.png.
     // On Windows an Image pointed at that reaches out to the host over SMB,
     // handing it an authentication attempt, for no reason the user could see

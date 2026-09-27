@@ -21,7 +21,7 @@ WizardStepBase {
     readonly property OSListModel osmodel: ImageWriterSingleton.getOSList()
     
     title: qsTr("Choose operating system")
-    subtitle: qsTr("Select an operating system to install on your Raspberry Pi")
+    subtitle: qsTr("Select the image to install on your device")
     showNextButton: true
     // Disable Next until a concrete OS has been selected
     nextButtonEnabled: oslist.currentIndex !== -1 && wizardContainer.selectedOsName.length > 0

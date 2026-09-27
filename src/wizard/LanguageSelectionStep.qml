@@ -19,7 +19,7 @@ WizardStepBase {
     property var _internalLanguages: []
 
     title: qsTr("Welcome")
-    subtitle: qsTr("Choose your language for Raspberry Pi Imager")
+    subtitle: qsTr("Choose your language for Gleem Imager")
     showBackButton: false
 
     // Populate and preselect language on load
@@ -79,7 +79,7 @@ WizardStepBase {
                         editable: false
                         selectTextByMouse: true
                         font.pointSize: Style.fontSizeInput
-                        Accessible.description: qsTr("Select the language for the Raspberry Pi Imager interface")
+                        Accessible.description: qsTr("Select the language for the Gleem Imager interface")
                         onActivated: function(index) {
                             if (index >= 0 && index < root._internalLanguages.length) {
                                 var internalName = root._internalLanguages[index]

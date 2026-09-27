@@ -17,9 +17,13 @@ if(GIT_EXECUTABLE)
     # which reads an unparseable version as "older than everything" and offers
     # an upgrade to whatever the server lists. Both prefixes are allowed
     # because this repository carries 1.6.1 as well as v1.6.2.
+    #
+    # Gleem Imager: only this fork's release tags, gleem-vX.Y.Z. The fork also
+    # carries upstream's vX.Y.Z tags, and after merging upstream one of those
+    # could be the nearest and pass itself off as a Gleem Imager version.
     execute_process(
         COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty
-                --match "v[0-9]*" --match "[0-9]*"
+                --match "gleem-v[0-9]*"
         WORKING_DIRECTORY "${SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_DESCRIBE
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -27,7 +31,7 @@ if(GIT_EXECUTABLE)
         RESULT_VARIABLE GIT_RESULT
     )
     if(GIT_RESULT EQUAL 0 AND GIT_DESCRIBE)
-        set(VERSION_STR "${GIT_DESCRIBE}")
+        string(REGEX REPLACE "^gleem-" "" VERSION_STR "${GIT_DESCRIBE}")
     endif()
 endif()
 

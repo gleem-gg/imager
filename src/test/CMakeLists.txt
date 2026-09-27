@@ -112,7 +112,7 @@ function(rpi_discover_tests target)
     # XDG_CONFIG_HOME as well: the imager keeps its settings in QSettings, and
     # several paths write them -- setPersistedCustomisationSetting() is called
     # whenever a customisation step is completed. Without this a test run
-    # rewrites the developer's own "Raspberry Pi Imager.conf", which holds
+    # rewrites the developer's own "Gleem Imager.conf", which holds
     # their hostname, username and password hash. Pointed at the build tree,
     # where it belongs.
     #
@@ -3096,7 +3096,7 @@ target_link_libraries(screenshot_pages_test PRIVATE
 target_compile_definitions(screenshot_pages_test PRIVATE
     SCREENSHOT_PAGES_FILE="${CMAKE_CURRENT_SOURCE_DIR}/screenshots/pages.txt"
     WIZARD_CONTAINER_QML="${CMAKE_CURRENT_SOURCE_DIR}/../wizard/WizardContainer.qml"
-    METAINFO_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../debian/com.raspberrypi.rpi-imager.metainfo.xml.in"
+    METAINFO_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../debian/gg.gleem.imager.metainfo.xml.in"
 )
 
 target_compile_features(screenshot_pages_test PRIVATE cxx_std_20)

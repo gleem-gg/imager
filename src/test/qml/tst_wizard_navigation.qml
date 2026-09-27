@@ -675,7 +675,7 @@ TestCase {
     }
 
     function sendRepoLink(url) {
-        ImageWriterSingleton.handleIncomingUrl("rpi-imager://open?repo=" + url)
+        ImageWriterSingleton.handleIncomingUrl("gleem-imager://open?repo=" + url)
     }
 
     function closeRepoDialog() {
@@ -749,9 +749,9 @@ TestCase {
         var first = "rpuak_abcdefghijkmnpqrstuvwxyz"
         var second = "rpuak_zyxwvutsrqpnmkjihgfedcba"
         ImageWriterSingleton.clearConnectToken()
-        ImageWriterSingleton.handleIncomingUrl("rpi-imager://connect?auth_key=" + first)
+        ImageWriterSingleton.handleIncomingUrl("gleem-imager://connect?auth_key=" + first)
 
-        ImageWriterSingleton.handleIncomingUrl("rpi-imager://connect?auth_key=" + second)
+        ImageWriterSingleton.handleIncomingUrl("gleem-imager://connect?auth_key=" + second)
 
         var d = findChild(wiz, "tokenConflictDialog")
         verify(d, "found the conflict dialog")
@@ -769,7 +769,7 @@ TestCase {
         // Handled on the container, because the Pi Connect step may not be
         // loaded when a write finishes and spends the token.
         ImageWriterSingleton.handleIncomingUrl(
-            "rpi-imager://connect?auth_key=rpuak_abcdefghijkmnpqrstuvwxyz")
+            "gleem-imager://connect?auth_key=rpuak_abcdefghijkmnpqrstuvwxyz")
         wiz.piConnectEnabled = true
         wiz.customizationSettings.piConnectEnabled = true
 
@@ -786,7 +786,7 @@ TestCase {
         // something no longer selected. Nothing was written with it, so the
         // step is not configured.
         ImageWriterSingleton.handleIncomingUrl(
-            "rpi-imager://connect?auth_key=rpuak_abcdefghijkmnpqrstuvwxyz")
+            "gleem-imager://connect?auth_key=rpuak_abcdefghijkmnpqrstuvwxyz")
         wiz.piConnectEnabled = true
         wiz.customizationSettings.piConnectEnabled = true
 

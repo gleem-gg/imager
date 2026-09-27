@@ -73,13 +73,16 @@ BaseDialog {
             // Only include secure boot key button if visible
             if (secureBootKeyButton.visible)
                 items.push(secureBootKeyButton.focusItem)
-            items.push(chkConnectOrg.focusItem)
+            if (chkConnectOrg.visible)
+                items.push(chkConnectOrg.focusItem)
             items.push(clearSettingsButton.focusItem)
             // Telemetry pill (and its help link) sit at the bottom — see the
             // pill's own placement comment below.
-            items.push(chkTelemetry.focusItem)
-            if (chkTelemetry.helpLinkItem && chkTelemetry.helpLinkItem.visible)
-                items.push(chkTelemetry.helpLinkItem)
+            if (chkTelemetry.visible) {
+                items.push(chkTelemetry.focusItem)
+                if (chkTelemetry.helpLinkItem && chkTelemetry.helpLinkItem.visible)
+                    items.push(chkTelemetry.helpLinkItem)
+            }
             return items
         }, 1)
         registerFocusGroup("buttons", function(){ 
@@ -171,7 +174,7 @@ BaseDialog {
                 objectName: "editRepoButton"
                 text: qsTr("Content Repository")
                 btnText: qsTr("Edit")
-                accessibleDescription: qsTr("Change the source of operating system images between official Raspberry Pi repository and custom sources")
+                accessibleDescription: qsTr("Change the source of images between the official Gleem repository and custom sources")
                 Layout.fillWidth: true
                 // Disable while write is in progress to prevent changing source during write
                 enabled: ImageWriterSingleton.writeState === ImageWriterSingleton.Idle ||
@@ -240,6 +243,8 @@ BaseDialog {
             ImOptionPill {
                 id: chkConnectOrg
                 objectName: "connectOrgToggle"
+                // Gleem Imager: Raspberry Pi Connect is not offered.
+                visible: false
                 text: qsTr("Raspberry Pi Connect for Organisations")
                 accessibleDescription: qsTr("Enable the organisation-level Raspberry Pi Connect registration flow. When active, the Connect wizard step collects an organisation API key and registers each provisioned device with Connect.")
                 helpLabel: ImageWriterSingleton.isEmbeddedMode() ? "" : qsTr("What is this?")
@@ -277,8 +282,10 @@ BaseDialog {
             ImOptionPill {
                 id: chkTelemetry
                 objectName: "telemetryToggle"
+                // Gleem Imager sends no telemetry, so there is nothing to switch.
+                visible: false
                 text: qsTr("Enable anonymous statistics (telemetry)")
-                accessibleDescription: qsTr("Send anonymous usage statistics to help improve Raspberry Pi Imager")
+                accessibleDescription: qsTr("Send anonymous usage statistics to help improve Gleem Imager")
                 helpLabel: ImageWriterSingleton.isEmbeddedMode() ? "" : qsTr("What is this?")
                 helpUrl: ImageWriterSingleton.isEmbeddedMode() ? "" : "https://github.com/raspberrypi/rpi-imager?tab=readme-ov-file#anonymous-metrics-telemetry"
                 Layout.fillWidth: true
@@ -337,7 +344,7 @@ BaseDialog {
                 id: saveButton
                 objectName: "optionsSaveButton"
                 text: qsTr("Save")
-                accessibleDescription: qsTr("Save the selected options and apply them to Raspberry Pi Imager")
+                accessibleDescription: qsTr("Save the selected options and apply them to Gleem Imager")
                 Layout.minimumWidth: Style.buttonWidthMinimum
                 activeFocusOnTab: true
                 onClicked: {
@@ -518,7 +525,7 @@ BaseDialog {
             font.family: Style.fontFamily
             color: Style.textDescriptionColor
             Layout.fillWidth: true
-            text: qsTr("If you disable warnings, Raspberry Pi Imager will <b>not show confirmation prompts before writing images</b>. You will still be required to <b>type the exact name</b> when selecting a system drive.")
+            text: qsTr("If you disable warnings, Gleem Imager will <b>not show confirmation prompts before writing images</b>. You will still be required to <b>type the exact name</b> when selecting a system drive.")
             Accessible.name: text.replace(/<[^>]+>/g, '')  // Strip HTML tags for accessibility
         }
 

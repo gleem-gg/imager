@@ -36,8 +36,8 @@
         <translation>Voleu desactivar els avisos?</translation>
     </message>
     <message>
-        <source>If you disable warnings, Raspberry Pi Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
-        <translation>Si desactiveu els avisos, el Raspberry Pi Imager &lt;b&gt;no mostrarà les confirmacions abans d&apos;escriure les imatges&lt;/b&gt;. Encara haureu d&apos; &lt;b&gt;escriure el nom exacte &lt;/b&gt; en seleccionar una unitat del sistema.</translation>
+        <source>If you disable warnings, Gleem Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
+        <translation>Si desactiveu els avisos, el Gleem Imager &lt;b&gt;no mostrarà les confirmacions abans d&apos;escriure les imatges&lt;/b&gt;. Encara haureu d&apos; &lt;b&gt;escriure el nom exacte &lt;/b&gt; en seleccionar una unitat del sistema.</translation>
     </message>
     <message>
         <source>Content Repository</source>
@@ -52,8 +52,8 @@
         <translation>Tanca el diàleg d&apos;opcions sense desar cap canvi</translation>
     </message>
     <message>
-        <source>Save the selected options and apply them to Raspberry Pi Imager</source>
-        <translation>Desa les opcions seleccionades i aplica-les al Raspberry Pi Imager</translation>
+        <source>Save the selected options and apply them to Gleem Imager</source>
+        <translation>Desa les opcions seleccionades i aplica-les al Gleem Imager</translation>
     </message>
     <message>
         <source>Keep warnings enabled and return to the options dialog</source>
@@ -72,8 +72,8 @@
         <translation>Expulsa automàticament el dispositiu d&apos;emmagatzematge quan el procés d&apos;escriptura es completi correctament</translation>
     </message>
     <message>
-        <source>Send anonymous usage statistics to help improve Raspberry Pi Imager</source>
-        <translation>Envia estadístiques d&apos;ús anònimes per ajudar a millorar el Raspberry Pi Imager</translation>
+        <source>Send anonymous usage statistics to help improve Gleem Imager</source>
+        <translation>Envia estadístiques d&apos;ús anònimes per ajudar a millorar el Gleem Imager</translation>
     </message>
     <message>
         <source>Skip confirmation dialogs before writing images (advanced users only)</source>
@@ -674,8 +674,8 @@ You can still write a local image file by pressing Next and selecting &apos;Use 
         <translation>Reinicia el sistema per aplicar els canvis</translation>
     </message>
     <message>
-        <source>Close Raspberry Pi Imager and exit the application</source>
-        <translation>Tanca el Raspberry Pi Imager i surt de l&apos;aplicació</translation>
+        <source>Close Gleem Imager and exit the application</source>
+        <translation>Tanca el Gleem Imager i surt de l&apos;aplicació</translation>
     </message>
     <message>
         <source>Return to storage selection to write the same image to another storage device</source>
@@ -738,8 +738,8 @@ Please check your network connection and try again.</source>
 <context>
     <name>DownloadThread</name>
     <message>
-        <source>Please verify if &apos;Raspberry Pi Imager&apos; is allowed access to &apos;removable volumes&apos; in privacy settings (under &apos;files and folders&apos; or alternatively give it &apos;full disk access&apos;).</source>
-        <translation>Verifiqueu si el «Raspberry Pi Imager» té accés als «volums extraïbles» des de la configuració de privacitat (sota «fitxers i carpetes» o doneu-li «accés complet al disc»)</translation>
+        <source>Please verify if &apos;Gleem Imager&apos; is allowed access to &apos;removable volumes&apos; in privacy settings (under &apos;files and folders&apos; or alternatively give it &apos;full disk access&apos;).</source>
+        <translation>Verifiqueu si el «Gleem Imager» té accés als «volums extraïbles» des de la configuració de privacitat (sota «fitxers i carpetes» o doneu-li «accés complet al disc»)</translation>
     </message>
     <message>
         <source>Cannot open storage device &apos;%1&apos;.</source>
@@ -1726,12 +1726,12 @@ Technical details: %1</source>
         <translation>Idioma:</translation>
     </message>
     <message>
-        <source>Choose your language for Raspberry Pi Imager</source>
-        <translation>Trieu el vostre idioma per al Raspberry Pi Imager</translation>
+        <source>Choose your language for Gleem Imager</source>
+        <translation>Trieu el vostre idioma per al Gleem Imager</translation>
     </message>
     <message>
-        <source>Select the language for the Raspberry Pi Imager interface</source>
-        <translation>Seleccioneu l&apos;idioma per a la interfície del Raspberry Pi Imager</translation>
+        <source>Select the language for the Gleem Imager interface</source>
+        <translation>Seleccioneu l&apos;idioma per a la interfície del Gleem Imager</translation>
     </message>
 </context>
 <context>
@@ -2015,8 +2015,8 @@ Technical details: %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <source>Raspberry Pi Imager requires elevated privileges to write to storage devices.</source>
-        <translation>El Raspberry Pi Imager requereix privilegis elevats per escriure en dispositius d&apos;emmagatzematge.</translation>
+        <source>Gleem Imager requires elevated privileges to write to storage devices.</source>
+        <translation>El Gleem Imager requereix privilegis elevats per escriure en dispositius d&apos;emmagatzematge.</translation>
     </message>
     <message>
         <source>Without this, you will encounter permission errors when writing images.</source>
@@ -2571,8 +2571,8 @@ to show system drives.</source>
         <translation>Hi ha una versió més recent de l&apos;Imager disponible. Voleu visitar el lloc web per baixar-la?</translation>
     </message>
     <message>
-        <source>Continue using the current version of Raspberry Pi Imager</source>
-        <translation>Continua utilitzant la versió actual del Raspberry Pi Imager</translation>
+        <source>Continue using the current version of Gleem Imager</source>
+        <translation>Continua utilitzant la versió actual del Gleem Imager</translation>
     </message>
     <message>
         <source>Open the Raspberry Pi website in your browser to download the latest version</source>
@@ -2918,11 +2918,11 @@ to show system drives.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You are opening a local Raspberry Pi Imager manifest file. This will replace the current OS list with the contents of this file.</source>
+        <source>You are opening a local Gleem Imager manifest file. This will replace the current OS list with the contents of this file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A website is requesting to switch Raspberry Pi Imager to use a custom OS repository.
+        <source>A website is requesting to switch Gleem Imager to use a custom OS repository.
 
 </source>
         <translation type="unfinished"></translation>
@@ -3154,8 +3154,8 @@ Please check your storage device and try again.</source>
         <translation>Selecciona una imatge .img personalitzada de l&apos;ordinador</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager is still busy. Are you sure you want to quit?</source>
-        <translation>El Raspberry Pi Imager encara està ocupat. Esteu segur que en voleu sortir?</translation>
+        <source>Gleem Imager is still busy. Are you sure you want to quit?</source>
+        <translation>El Gleem Imager encara està ocupat. Esteu segur que en voleu sortir?</translation>
     </message>
     <message>
         <source>Storage device removed</source>
@@ -3178,16 +3178,16 @@ Please check your storage device and try again.</source>
         <translation>Tanca la notificació de retirada d&apos;emmagatzematge i torna a la selecció d&apos;emmagatzematge</translation>
     </message>
     <message>
-        <source>Return to Raspberry Pi Imager and continue the current operation</source>
-        <translation>Torna al Raspberry Pi Imager i continua l&apos;operació actual</translation>
+        <source>Return to Gleem Imager and continue the current operation</source>
+        <translation>Torna al Gleem Imager i continua l&apos;operació actual</translation>
     </message>
     <message>
-        <source>Force quit Raspberry Pi Imager and cancel the current write operation</source>
-        <translation>Força la sortida del Raspberry Pi Imager i cancel·la l&apos;operació d&apos;escriptura actual</translation>
+        <source>Force quit Gleem Imager and cancel the current write operation</source>
+        <translation>Força la sortida del Gleem Imager i cancel·la l&apos;operació d&apos;escriptura actual</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager %1</source>
-        <translation>Raspberry Pi Imager %1</translation>
+        <source>Gleem Imager %1</source>
+        <translation>Gleem Imager %1</translation>
     </message>
     <message>
         <source>Insufficient Permissions</source>
@@ -3202,16 +3202,16 @@ Please check your storage device and try again.</source>
         <translation>Surt</translation>
     </message>
     <message>
-        <source>Exit Raspberry Pi Imager - you must restart with elevated privileges to write images</source>
-        <translation>Surt del Raspberry Pi Imager - heu de reiniciar amb privilegis elevats per escriure imatges</translation>
+        <source>Exit Gleem Imager - you must restart with elevated privileges to write images</source>
+        <translation>Surt del Gleem Imager - heu de reiniciar amb privilegis elevats per escriure imatges</translation>
     </message>
     <message>
         <source>Install Authorization</source>
         <translation>Instal·la l&apos;autorització</translation>
     </message>
     <message>
-        <source>Install system authorization to allow Raspberry Pi Imager to run with elevated privileges</source>
-        <translation>Instal·la l&apos;autorització del sistema per permetre que el Raspberry Pi Imager s&apos;executi amb privilegis elevats</translation>
+        <source>Install system authorization to allow Gleem Imager to run with elevated privileges</source>
+        <translation>Instal·la l&apos;autorització del sistema per permetre que el Gleem Imager s&apos;executi amb privilegis elevats</translation>
     </message>
     <message>
         <source>Save Performance Data</source>

@@ -36,8 +36,8 @@
         <translation>Díchumasaigh rabhaidh?</translation>
     </message>
     <message>
-        <source>If you disable warnings, Raspberry Pi Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
-        <translation>Mura ndéanann tú rabhaidh a dhíchumasú, &lt;b&gt;ní thaispeánfaidh Raspberry Pi Imager leideanna deimhnithe sula scríobhfar íomhánna&lt;/b&gt;. Beidh ort fós &lt;b&gt;an t-ainm cruinn a chlóscríobh&lt;/b&gt; agus tiomántán córais á roghnú agat.</translation>
+        <source>If you disable warnings, Gleem Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
+        <translation>Mura ndéanann tú rabhaidh a dhíchumasú, &lt;b&gt;ní thaispeánfaidh Gleem Imager leideanna deimhnithe sula scríobhfar íomhánna&lt;/b&gt;. Beidh ort fós &lt;b&gt;an t-ainm cruinn a chlóscríobh&lt;/b&gt; agus tiomántán córais á roghnú agat.</translation>
     </message>
     <message>
         <source>Content Repository</source>
@@ -52,8 +52,8 @@
         <translation>Dún an dialóg roghanna gan aon athruithe a shábháil</translation>
     </message>
     <message>
-        <source>Save the selected options and apply them to Raspberry Pi Imager</source>
-        <translation>Sábháil na roghanna roghnaithe agus cuir i bhfeidhm iad ar Raspberry Pi Imager</translation>
+        <source>Save the selected options and apply them to Gleem Imager</source>
+        <translation>Sábháil na roghanna roghnaithe agus cuir i bhfeidhm iad ar Gleem Imager</translation>
     </message>
     <message>
         <source>Keep warnings enabled and return to the options dialog</source>
@@ -72,8 +72,8 @@
         <translation>Díbirt an gléas stórála go huathoibríoch nuair a bheidh an próiseas scríbhneoireachta críochnaithe go rathúil</translation>
     </message>
     <message>
-        <source>Send anonymous usage statistics to help improve Raspberry Pi Imager</source>
-        <translation>Seol staitisticí úsáide gan ainm chun cabhrú le Raspberry Pi Imager a fheabhsú</translation>
+        <source>Send anonymous usage statistics to help improve Gleem Imager</source>
+        <translation>Seol staitisticí úsáide gan ainm chun cabhrú le Gleem Imager a fheabhsú</translation>
     </message>
     <message>
         <source>Skip confirmation dialogs before writing images (advanced users only)</source>
@@ -676,8 +676,8 @@ Is féidir leat comhad íomhá áitiúil a scríobh fós trí bhrú ar Ar Aghaid
         <translation>Atosaigh an córas chun na hathruithe a chur i bhfeidhm</translation>
     </message>
     <message>
-        <source>Close Raspberry Pi Imager and exit the application</source>
-        <translation>Dún Raspberry Pi Imager agus scoir an feidhmchlár</translation>
+        <source>Close Gleem Imager and exit the application</source>
+        <translation>Dún Gleem Imager agus scoir an feidhmchlár</translation>
     </message>
     <message>
         <source>Return to storage selection to write the same image to another storage device</source>
@@ -754,8 +754,8 @@ Seiceáil do nasc líonra agus déan iarracht arís.</translation>
 <context>
     <name>DownloadThread</name>
     <message>
-        <source>Please verify if 'Raspberry Pi Imager' is allowed access to 'removable volumes' in privacy settings (under 'files and folders' or alternatively give it 'full disk access').</source>
-        <translation>Deimhnigh le do thoil an bhfuil cead ag 'Raspberry Pi Imager' rochtain a fháil ar 'imleabhair inbhainte' i socruithe príobháideachta (faoi 'comhaid agus fillteáin' nó tabhair 'rochtain iomlán ar dhiosca' dó.</translation>
+        <source>Please verify if 'Gleem Imager' is allowed access to 'removable volumes' in privacy settings (under 'files and folders' or alternatively give it 'full disk access').</source>
+        <translation>Deimhnigh le do thoil an bhfuil cead ag 'Gleem Imager' rochtain a fháil ar 'imleabhair inbhainte' i socruithe príobháideachta (faoi 'comhaid agus fillteáin' nó tabhair 'rochtain iomlán ar dhiosca' dó.</translation>
     </message>
     <message>
         <source>Cannot open storage device '%1'.</source>
@@ -1804,12 +1804,12 @@ Sonraí teicniúla: %1</translation>
         <translation>Teanga:</translation>
     </message>
     <message>
-        <source>Choose your language for Raspberry Pi Imager</source>
-        <translation>Roghnaigh do theanga le haghaidh Raspberry Pi Imager</translation>
+        <source>Choose your language for Gleem Imager</source>
+        <translation>Roghnaigh do theanga le haghaidh Gleem Imager</translation>
     </message>
     <message>
-        <source>Select the language for the Raspberry Pi Imager interface</source>
-        <translation>Roghnaigh an teanga don chomhéadan Raspberry Pi Imager</translation>
+        <source>Select the language for the Gleem Imager interface</source>
+        <translation>Roghnaigh an teanga don chomhéadan Gleem Imager</translation>
     </message>
 </context>
 <context>
@@ -2093,8 +2093,8 @@ Sonraí teicniúla: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <source>Raspberry Pi Imager requires elevated privileges to write to storage devices.</source>
-        <translation>Éilíonn Raspberry Pi Imager pribhléidí ardaithe chun scríobh chuig gléasanna stórála.</translation>
+        <source>Gleem Imager requires elevated privileges to write to storage devices.</source>
+        <translation>Éilíonn Gleem Imager pribhléidí ardaithe chun scríobh chuig gléasanna stórála.</translation>
     </message>
     <message>
         <source>Without this, you will encounter permission errors when writing images.</source>
@@ -2652,8 +2652,8 @@ chun tiomántáin chórais a thaispeáint.</translation>
         <translation>Tá leagan níos nuaí de Imager ar fáil. Ar mhaith leat cuairt a thabhairt ar an suíomh Gréasáin chun é a íoslódáil?</translation>
     </message>
     <message>
-        <source>Continue using the current version of Raspberry Pi Imager</source>
-        <translation>Lean ort ag úsáid an leagan reatha de Raspberry Pi Imager</translation>
+        <source>Continue using the current version of Gleem Imager</source>
+        <translation>Lean ort ag úsáid an leagan reatha de Gleem Imager</translation>
     </message>
     <message>
         <source>Open the Raspberry Pi website in your browser to download the latest version</source>
@@ -3001,14 +3001,14 @@ chun tiomántáin chórais a thaispeáint.</translation>
         <translation>Athraigh go stórlann saincheaptha?</translation>
     </message>
     <message>
-        <source>You are opening a local Raspberry Pi Imager manifest file. This will replace the current OS list with the contents of this file.</source>
-        <translation>Tá comhad manifíse áitiúil Raspberry Pi Imager á oscailt agat. Cuirfidh sé seo ábhar an chomhaid seo in ionad an liosta OS reatha.</translation>
+        <source>You are opening a local Gleem Imager manifest file. This will replace the current OS list with the contents of this file.</source>
+        <translation>Tá comhad manifíse áitiúil Gleem Imager á oscailt agat. Cuirfidh sé seo ábhar an chomhaid seo in ionad an liosta OS reatha.</translation>
     </message>
     <message>
-        <source>A website is requesting to switch Raspberry Pi Imager to use a custom OS repository.
+        <source>A website is requesting to switch Gleem Imager to use a custom OS repository.
 
 </source>
-        <translation>Tá suíomh Gréasáin ag iarraidh Raspberry Pi Imager a athrú chun stórlann oibriúcháin saincheaptha a úsáid.
+        <translation>Tá suíomh Gréasáin ag iarraidh Gleem Imager a athrú chun stórlann oibriúcháin saincheaptha a úsáid.
 
 </translation>
     </message>
@@ -3241,8 +3241,8 @@ Seiceáil do ghléas stórála agus déan iarracht arís.</translation>
         <translation>Roghnaigh .img saincheaptha ó do ríomhaire</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager is still busy. Are you sure you want to quit?</source>
-        <translation>Tá Raspberry Pi Imager fós gnóthach. An bhfuil tú cinnte gur mhaith leat éirí as?</translation>
+        <source>Gleem Imager is still busy. Are you sure you want to quit?</source>
+        <translation>Tá Gleem Imager fós gnóthach. An bhfuil tú cinnte gur mhaith leat éirí as?</translation>
     </message>
     <message>
         <source>Storage device removed</source>
@@ -3265,15 +3265,15 @@ Seiceáil do ghléas stórála agus déan iarracht arís.</translation>
         <translation>Dún an fógra maidir leis an stóráil a baineadh agus fill ar ais chuig an rogha stórála</translation>
     </message>
     <message>
-        <source>Return to Raspberry Pi Imager and continue the current operation</source>
+        <source>Return to Gleem Imager and continue the current operation</source>
         <translation>Fill ar ais chuig Íomháitheoir Raspberry Pi agus lean ar aghaidh leis an oibríocht reatha</translation>
     </message>
     <message>
-        <source>Force quit Raspberry Pi Imager and cancel the current write operation</source>
-        <translation>Éigeantach scor de Raspberry Pi Imager agus cealaigh an oibríocht scríbhneoireachta reatha</translation>
+        <source>Force quit Gleem Imager and cancel the current write operation</source>
+        <translation>Éigeantach scor de Gleem Imager agus cealaigh an oibríocht scríbhneoireachta reatha</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager %1</source>
+        <source>Gleem Imager %1</source>
         <translation>Íomháitheoir Raspberry Pi %1</translation>
     </message>
     <message>
@@ -3289,16 +3289,16 @@ Seiceáil do ghléas stórála agus déan iarracht arís.</translation>
         <translation>Scoir</translation>
     </message>
     <message>
-        <source>Exit Raspberry Pi Imager - you must restart with elevated privileges to write images</source>
-        <translation>Scoir Raspberry Pi Imager - ní mór duit atosú le pribhléidí ardaithe chun íomhánna a scríobh</translation>
+        <source>Exit Gleem Imager - you must restart with elevated privileges to write images</source>
+        <translation>Scoir Gleem Imager - ní mór duit atosú le pribhléidí ardaithe chun íomhánna a scríobh</translation>
     </message>
     <message>
         <source>Install Authorization</source>
         <translation>Údarú Suiteála</translation>
     </message>
     <message>
-        <source>Install system authorization to allow Raspberry Pi Imager to run with elevated privileges</source>
-        <translation>Suiteáil údarú córais chun ligean do Raspberry Pi Imager rith le pribhléidí ardaithe</translation>
+        <source>Install system authorization to allow Gleem Imager to run with elevated privileges</source>
+        <translation>Suiteáil údarú córais chun ligean do Gleem Imager rith le pribhléidí ardaithe</translation>
     </message>
     <message>
         <source>Save Performance Data</source>

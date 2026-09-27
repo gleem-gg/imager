@@ -1329,7 +1329,7 @@ Item {
                 root.piConnectEnabled = false
         }
         
-        // Handle repository URL received from deep link (rpi-imager://open?repo=...)
+        // Handle repository URL received from deep link (gleem-imager://open?repo=...)
         function onRepositoryUrlReceived(url) {
             repositoryUrlDialog.openWithUrl(url)
         }
@@ -1421,8 +1421,8 @@ Item {
         FocusableText {
             id: repoBodyText
             text: repositoryUrlDialog.isLocalFile
-                ? qsTr("You are opening a local Raspberry Pi Imager manifest file. This will replace the current OS list with the contents of this file.")
-                : qsTr("A website is requesting to switch Raspberry Pi Imager to use a custom OS repository.\n\n") +
+                ? qsTr("You are opening a local Gleem Imager manifest file. This will replace the current OS list with the contents of this file.")
+                : qsTr("A website is requesting to switch Gleem Imager to use a custom OS repository.\n\n") +
                   qsTr("Only accept if you trust this source and intentionally clicked a link to open this repository.")
             font.pointSize: Style.fontSizeFormLabel
             font.family: Style.fontFamily

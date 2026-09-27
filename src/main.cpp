@@ -296,10 +296,10 @@ int main(int argc, char *argv[])
             g_logFile = fopen(logPath, "a");
             if (g_logFile) {
 #ifdef Q_OS_UNIX
-                fprintf(g_logFile, "\n=== Raspberry Pi Imager started (PID %d, EUID %d) ===\n",
+                fprintf(g_logFile, "\n=== Gleem Imager started (PID %d, EUID %d) ===\n",
                         getpid(), geteuid());
 #else
-                fprintf(g_logFile, "\n=== Raspberry Pi Imager started ===\n");
+                fprintf(g_logFile, "\n=== Gleem Imager started ===\n");
 #endif
                 fflush(g_logFile);
                 qInstallMessageHandler(fileLogHandler);
@@ -393,9 +393,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    app.setOrganizationName("Raspberry Pi");
-    app.setOrganizationDomain("raspberrypi.com");
-    app.setApplicationName("Raspberry Pi Imager");
+    app.setOrganizationName("Gleem");
+    app.setOrganizationDomain("gleem.gg");
+    app.setApplicationName("Gleem Imager");
     app.setApplicationVersion(ImageWriter::staticVersion());
     app.setWindowIcon(QIcon(":/icons/rpi-imager.ico"));
 
@@ -476,7 +476,7 @@ int main(int argc, char *argv[])
     // Create ImageWriter early to check embedded mode
     ImageWriter imageWriter(nullptr);
 
-    // Register as the handler for the rpi-imager:// URL scheme so the Raspberry
+    // Register as the handler for the gleem-imager:// URL scheme so the Raspberry
     // Pi Connect sign-in callback can route back to us. Platform mechanics live
     // in the PAL (desktop file on Linux, Launch Services on macOS, installer on
     // Windows). Skipped in embedded mode, which has no desktop environment.
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
     //
     // Imager elevates itself to write to a disk and applyQuirks() then points
     // HOME and the XDG directories at the invoking user, so from that point
-    // root is writing into somebody else's home: the rpi-imager:// handler,
+    // root is writing into somebody else's home: the gleem-imager:// handler,
     // the mimeinfo.cache and mimeapps.list that update-desktop-database and
     // xdg-mime rewrite, and the OS list cache. Left root-owned, the two MIME
     // files stop *any* application registering a file association, and a
@@ -506,7 +506,7 @@ int main(int argc, char *argv[])
         // Named individually rather than sweeping the applications directory:
         // other applications' entries live there too and are not ours to touch.
         for (const QString& path : {
-                 applications + QStringLiteral("/com.raspberrypi.rpi-imager-uri-handler.desktop"),
+                 applications + QStringLiteral("/gg.gleem.imager-uri-handler.desktop"),
                  applications + QStringLiteral("/mimeinfo.cache"),
                  config + QStringLiteral("/mimeapps.list"),
                  QSettings().fileName(),
@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
     int cliRefreshJitter = -1;
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Raspberry Pi Imager GUI");
+    parser.setApplicationDescription("Gleem Imager GUI");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions({
@@ -575,9 +575,9 @@ int main(int argc, char *argv[])
         {"enable-secure-boot", "Force enable secure boot customization step regardless of OS capabilities"}
     });
 
-    // Accept rpi-imager:// callback URLs as positional argument (used by callback relay on Windows)
+    // Accept gleem-imager:// callback URLs as positional argument (used by callback relay on Windows)
     // Note: This is NOT for passing image files - use --cli mode for that
-    parser.addPositionalArgument("callback-url", "rpi-imager:// callback URL (internal use)", "[callback-url]");
+    parser.addPositionalArgument("callback-url", "gleem-imager:// callback URL (internal use)", "[callback-url]");
     parser.process(app);
 
 
@@ -671,7 +671,7 @@ int main(int argc, char *argv[])
         ImageWriter::setForceSecureBootEnabled(true);
     }
 
-    // Accept rpi-imager:// callback URLs or manifest files (.rpi-imager-manifest, .json) as positional argument
+    // Accept gleem-imager:// callback URLs or manifest files (.gleem-imager-manifest, .json) as positional argument
     // Image files/URLs should be passed via --cli mode, not the desktop GUI
     const QStringList posArgs = parser.positionalArguments();
     if (!posArgs.isEmpty())
@@ -682,7 +682,7 @@ int main(int argc, char *argv[])
         if (posUrl.isLocalFile())
             firstPos = posUrl.toLocalFile();
 
-        if (firstPos.startsWith("rpi-imager:", Qt::CaseInsensitive))
+        if (firstPos.startsWith("gleem-imager:", Qt::CaseInsensitive))
         {
             callbackUrl = QUrl(firstPos);
         }
@@ -716,15 +716,15 @@ int main(int argc, char *argv[])
             QDBusInterface interface("org.freedesktop.DBus", "/org/freedesktop/DBus",
                                     "org.freedesktop.DBus", bus);
             QDBusReply<QStringList> reply = interface.call("ListNames");
-            if (reply.isValid() && reply.value().contains("com.raspberrypi.rpi-imager"))
+            if (reply.isValid() && reply.value().contains("gg.gleem.imager"))
             {
                 // Another instance is running - send callback URL to it via D-Bus
-                QDBusInterface iface("com.raspberrypi.rpi-imager", "/com/raspberrypi/rpi_imager",
-                                   "com.raspberrypi.rpi-imager", bus);
+                QDBusInterface iface("gg.gleem.imager", "/gg/gleem/imager",
+                                   "gg.gleem.imager", bus);
                 QDBusMessage msg = QDBusMessage::createMethodCall(
-                    "com.raspberrypi.rpi-imager",
-                    "/com/raspberrypi/rpi_imager",
-                    "com.raspberrypi.rpi-imager",
+                    "gg.gleem.imager",
+                    "/gg/gleem/imager",
+                    "gg.gleem.imager",
                     "HandleUrl");
                 msg << callbackUrl.toString();
                 QDBusReply<void> callReply = bus.call(msg);
@@ -771,9 +771,9 @@ int main(int argc, char *argv[])
     {
         QObject *dbusObject = new QObject(&app);
         UriHandlerAdaptor *adaptor = new UriHandlerAdaptor(&imageWriter, dbusObject);
-        if (bus.registerObject("/com/raspberrypi/rpi_imager", dbusObject))
+        if (bus.registerObject("/gg/gleem/imager", dbusObject))
         {
-            if (bus.registerService("com.raspberrypi.rpi-imager"))
+            if (bus.registerService("gg.gleem.imager"))
             {
                 qDebug() << "Registered D-Bus service for URI callbacks";
             }
@@ -986,7 +986,7 @@ int main(int argc, char *argv[])
     if (hasPermissionIssue)
     {
         // Common message parts to reduce translation effort
-        QString header = QObject::tr("Raspberry Pi Imager requires elevated privileges to write to storage devices.");
+        QString header = QObject::tr("Gleem Imager requires elevated privileges to write to storage devices.");
         QString footer = QObject::tr("Without this, you will encounter permission errors when writing images.");
         QString statusAndAction = {};
 

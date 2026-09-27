@@ -26,9 +26,9 @@ Cli::Cli(int &argc, char *argv[]) : QObject(nullptr), _imageWriter(nullptr)
     /* Attach to console for output (Windows-specific, no-op on other platforms) */
     PlatformQuirks::attachConsole();
     _app = new QCoreApplication(argc, argv);
-    _app->setOrganizationName("Raspberry Pi");
-    _app->setOrganizationDomain("raspberrypi.com");
-    _app->setApplicationName("Raspberry Pi Imager");
+    _app->setOrganizationName("Gleem");
+    _app->setOrganizationDomain("gleem.gg");
+    _app->setApplicationName("Gleem Imager");
     _app->setApplicationVersion(ImageWriter::staticVersion());
     // Don't create ImageWriter here - defer until we know we need it
 }

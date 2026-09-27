@@ -846,7 +846,7 @@ TEST_CASE("A board icon naming a host is dropped", "[models][hwlist][icon]")
 {
     // The board list is filled from the same repository json as the OS list,
     // and a repository is not necessarily trusted -- it can arrive from
-    // --repo, from the repository dialog, or from an rpi-imager:// link.
+    // --repo, from the repository dialog, or from an gleem-imager:// link.
     // file://host/share/icon.png resolves to the UNC path
     // //host/share/icon.png, and an Image pointed at that on Windows reaches
     // out to the host over SMB.

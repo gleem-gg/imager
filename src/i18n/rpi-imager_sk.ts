@@ -36,8 +36,8 @@
         <translation>Vypnúť varovania?</translation>
     </message>
     <message>
-        <source>If you disable warnings, Raspberry Pi Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
-        <translation>Ak vypnete varovania, Raspberry Pi Imager &lt;b&gt;nebude zobrazovať výzvy na potvrdenie pred zápisom obrazov&lt;/b&gt;. Pri výbere systémového disku &lt;b&gt;budete stále musieť zadať jeho presný názov&lt;/b&gt;.</translation>
+        <source>If you disable warnings, Gleem Imager will &lt;b&gt;not show confirmation prompts before writing images&lt;/b&gt;. You will still be required to &lt;b&gt;type the exact name&lt;/b&gt; when selecting a system drive.</source>
+        <translation>Ak vypnete varovania, Gleem Imager &lt;b&gt;nebude zobrazovať výzvy na potvrdenie pred zápisom obrazov&lt;/b&gt;. Pri výbere systémového disku &lt;b&gt;budete stále musieť zadať jeho presný názov&lt;/b&gt;.</translation>
     </message>
     <message>
         <source>Content Repository</source>
@@ -52,8 +52,8 @@
         <translation>Zatvoriť dialógové okno nastavení bez uloženia akýchkoľvek zmien</translation>
     </message>
     <message>
-        <source>Save the selected options and apply them to Raspberry Pi Imager</source>
-        <translation>Uložiť vybrané nastavenia a použiť ich v Raspberry Pi Imager</translation>
+        <source>Save the selected options and apply them to Gleem Imager</source>
+        <translation>Uložiť vybrané nastavenia a použiť ich v Gleem Imager</translation>
     </message>
     <message>
         <source>Keep warnings enabled and return to the options dialog</source>
@@ -72,8 +72,8 @@
         <translation>Automaticky vysunúť úložné zariadenie po úspešnom dokončení zápisu</translation>
     </message>
     <message>
-        <source>Send anonymous usage statistics to help improve Raspberry Pi Imager</source>
-        <translation>Odosielať anonymné štatistiky o používaní pre zlepšenie Raspberry Pi Imager</translation>
+        <source>Send anonymous usage statistics to help improve Gleem Imager</source>
+        <translation>Odosielať anonymné štatistiky o používaní pre zlepšenie Gleem Imager</translation>
     </message>
     <message>
         <source>Skip confirmation dialogs before writing images (advanced users only)</source>
@@ -674,8 +674,8 @@ You can still write a local image file by pressing Next and selecting &apos;Use 
         <translation>Reštartujte systém, aby sa zmeny prejavili</translation>
     </message>
     <message>
-        <source>Close Raspberry Pi Imager and exit the application</source>
-        <translation>Zatvoriť Raspberry Pi Imager a ukončiť aplikáciu</translation>
+        <source>Close Gleem Imager and exit the application</source>
+        <translation>Zatvoriť Gleem Imager a ukončiť aplikáciu</translation>
     </message>
     <message>
         <source>Return to storage selection to write the same image to another storage device</source>
@@ -738,8 +738,8 @@ Please check your network connection and try again.</source>
 <context>
     <name>DownloadThread</name>
     <message>
-        <source>Please verify if &apos;Raspberry Pi Imager&apos; is allowed access to &apos;removable volumes&apos; in privacy settings (under &apos;files and folders&apos; or alternatively give it &apos;full disk access&apos;).</source>
-        <translation>Preverte, prosím, či má &apos;Raspberry Pi Imager&apos; prístup k &apos;vymeniteľným nosičom&apos; v nastaveniach súkromia (pod &apos;súbormi a priečinkami&apos;, prípadne mu udeľte &apos;plný prístup k diskom&apos;).</translation>
+        <source>Please verify if &apos;Gleem Imager&apos; is allowed access to &apos;removable volumes&apos; in privacy settings (under &apos;files and folders&apos; or alternatively give it &apos;full disk access&apos;).</source>
+        <translation>Preverte, prosím, či má &apos;Gleem Imager&apos; prístup k &apos;vymeniteľným nosičom&apos; v nastaveniach súkromia (pod &apos;súbormi a priečinkami&apos;, prípadne mu udeľte &apos;plný prístup k diskom&apos;).</translation>
     </message>
     <message>
         <source>Cannot open storage device &apos;%1&apos;.</source>
@@ -1726,12 +1726,12 @@ Technical details: %1</source>
         <translation>Jazyk:</translation>
     </message>
     <message>
-        <source>Choose your language for Raspberry Pi Imager</source>
-        <translation>Vyberte jazyk pre Raspberry Pi Imager</translation>
+        <source>Choose your language for Gleem Imager</source>
+        <translation>Vyberte jazyk pre Gleem Imager</translation>
     </message>
     <message>
-        <source>Select the language for the Raspberry Pi Imager interface</source>
-        <translation>Vyberte jazyk používateľského rozhrania Raspberry Pi Imager</translation>
+        <source>Select the language for the Gleem Imager interface</source>
+        <translation>Vyberte jazyk používateľského rozhrania Gleem Imager</translation>
     </message>
 </context>
 <context>
@@ -2015,8 +2015,8 @@ Technical details: %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <source>Raspberry Pi Imager requires elevated privileges to write to storage devices.</source>
-        <translation>Raspberry Pi Imager vyžaduje vyššie oprávnenia pre zápis na úložné zariadenia.</translation>
+        <source>Gleem Imager requires elevated privileges to write to storage devices.</source>
+        <translation>Gleem Imager vyžaduje vyššie oprávnenia pre zápis na úložné zariadenia.</translation>
     </message>
     <message>
         <source>Without this, you will encounter permission errors when writing images.</source>
@@ -2574,8 +2574,8 @@ pre zobrazenie systémových diskov.</translation>
         <translation>K dispozícii je novšia verzia Imagera. Chcete navštíviť webovú stránku a stiahnuť ju?</translation>
     </message>
     <message>
-        <source>Continue using the current version of Raspberry Pi Imager</source>
-        <translation>Pokračovať s existujúcou verziou Raspberry Pi Imager</translation>
+        <source>Continue using the current version of Gleem Imager</source>
+        <translation>Pokračovať s existujúcou verziou Gleem Imager</translation>
     </message>
     <message>
         <source>Open the Raspberry Pi website in your browser to download the latest version</source>
@@ -2923,11 +2923,11 @@ pre zobrazenie systémových diskov.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You are opening a local Raspberry Pi Imager manifest file. This will replace the current OS list with the contents of this file.</source>
+        <source>You are opening a local Gleem Imager manifest file. This will replace the current OS list with the contents of this file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A website is requesting to switch Raspberry Pi Imager to use a custom OS repository.
+        <source>A website is requesting to switch Gleem Imager to use a custom OS repository.
 
 </source>
         <translation type="unfinished"></translation>
@@ -3159,8 +3159,8 @@ Please check your storage device and try again.</source>
         <translation>Použiť vlastný súbor .img na vašom počítači</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager is still busy. Are you sure you want to quit?</source>
-        <translation>Raspberry Pi Imager ešte pracuje. Naozaj ho chcete ukončiť?</translation>
+        <source>Gleem Imager is still busy. Are you sure you want to quit?</source>
+        <translation>Gleem Imager ešte pracuje. Naozaj ho chcete ukončiť?</translation>
     </message>
     <message>
         <source>Storage device removed</source>
@@ -3183,16 +3183,16 @@ Please check your storage device and try again.</source>
         <translation>Zatvoriť oznámenie o odobraní úložiska a vrátiť sa k výberu úložiska</translation>
     </message>
     <message>
-        <source>Return to Raspberry Pi Imager and continue the current operation</source>
-        <translation>Vrátiť sa do Raspberry Pi Imagera a pokračovať v aktuálnej operácii</translation>
+        <source>Return to Gleem Imager and continue the current operation</source>
+        <translation>Vrátiť sa do Gleem Imagera a pokračovať v aktuálnej operácii</translation>
     </message>
     <message>
-        <source>Force quit Raspberry Pi Imager and cancel the current write operation</source>
-        <translation>Vynútiť ukončenie Raspberry Pi Imagera a zrušiť prebiehajúci zápis</translation>
+        <source>Force quit Gleem Imager and cancel the current write operation</source>
+        <translation>Vynútiť ukončenie Gleem Imagera a zrušiť prebiehajúci zápis</translation>
     </message>
     <message>
-        <source>Raspberry Pi Imager %1</source>
-        <translation>Raspberry Pi Imager %1</translation>
+        <source>Gleem Imager %1</source>
+        <translation>Gleem Imager %1</translation>
     </message>
     <message>
         <source>Insufficient Permissions</source>
@@ -3207,16 +3207,16 @@ Please check your storage device and try again.</source>
         <translation>Ukončiť</translation>
     </message>
     <message>
-        <source>Exit Raspberry Pi Imager - you must restart with elevated privileges to write images</source>
-        <translation>Ukončiť Raspberry Pi Imager – pre zápis obrazov ho musíte spustiť znova s vyššími oprávneniami</translation>
+        <source>Exit Gleem Imager - you must restart with elevated privileges to write images</source>
+        <translation>Ukončiť Gleem Imager – pre zápis obrazov ho musíte spustiť znova s vyššími oprávneniami</translation>
     </message>
     <message>
         <source>Install Authorization</source>
         <translation>Nainštalovať oprávnenia</translation>
     </message>
     <message>
-        <source>Install system authorization to allow Raspberry Pi Imager to run with elevated privileges</source>
-        <translation>Nainštalovať systémové oprávnenia, aby mohol Raspberry Pi Imager bežať s vyššími oprávneniami</translation>
+        <source>Install system authorization to allow Gleem Imager to run with elevated privileges</source>
+        <translation>Nainštalovať systémové oprávnenia, aby mohol Gleem Imager bežať s vyššími oprávneniami</translation>
     </message>
     <message>
         <source>Save Performance Data</source>

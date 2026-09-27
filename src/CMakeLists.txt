@@ -5,7 +5,7 @@ include(cmake/GeneratedResource.cmake)
 
 cmake_minimum_required(VERSION 3.22)
 OPTION (ENABLE_CHECK_VERSION "Check for version updates" ON)
-OPTION (ENABLE_TELEMETRY "Enable sending telemetry" ON)
+OPTION (ENABLE_TELEMETRY "Enable sending telemetry" OFF)
 OPTION (BUILD_EMBEDDED "Build for Embedded Imager" OFF)
 OPTION (BUILD_CLI_ONLY "Build CLI-only version without GUI components" OFF)
 # Test-only hooks, for src/test/embedded_scaling to drive and photograph the UI.
@@ -524,9 +524,12 @@ endif()
 # Ensure version header is generated before compiling
 add_dependencies(${PROJECT_NAME} generate_version)
 
-# Set output name based on build type
+# Set output name based on build type. The target keeps upstream's name to
+# keep this fork's diff small; the binary is Gleem Imager's.
 if(BUILD_CLI_ONLY)
-    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "rpi-imager-cli")
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "gleem-imager-cli")
+else()
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "gleem-imager")
 endif()
 
 # Create an rpi-imager_lupdate target

@@ -302,7 +302,7 @@ WizardStepBase {
         ImButtonRed {
             id: finishButton
             text: ImageWriterSingleton.isEmbeddedMode() ? qsTr("Reboot") : CommonStrings.finish
-            accessibleDescription: root.ejectInProgress ? qsTr("Available once the storage device has been ejected") : (ImageWriterSingleton.isEmbeddedMode() ? qsTr("Reboot the system to apply changes") : qsTr("Close Raspberry Pi Imager and exit the application"))
+            accessibleDescription: root.ejectInProgress ? qsTr("Available once the storage device has been ejected") : (ImageWriterSingleton.isEmbeddedMode() ? qsTr("Reboot the system to apply changes") : qsTr("Close Gleem Imager and exit the application"))
             enabled: !root.ejectInProgress
             activeFocusOnTab: true
             Layout.minimumWidth: Style.buttonWidthMinimum

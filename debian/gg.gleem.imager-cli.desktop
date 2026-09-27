@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Gleem Imager (CLI)
+Comment=Gleem Imager command-line interface
+Exec=gleem-imager-cli
+Icon=gleem-imager
+Categories=System;
+Terminal=true
+NoDisplay=true

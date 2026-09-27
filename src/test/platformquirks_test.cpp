@@ -590,7 +590,7 @@ TEST_CASE("Arguments reach the program one element each",
     CHECK(got == args);
 }
 
-TEST_CASE("registerUriScheme writes the rpi-imager:// desktop entry", "[platformquirks][linux]") {
+TEST_CASE("registerUriScheme writes the gleem-imager:// desktop entry", "[platformquirks][linux]") {
     // Redirect the XDG data/config dirs to a temp location so the test neither
     // pollutes nor depends on the real user environment (any update-desktop-
     // database / xdg-mime side effects land in the temp dirs).
@@ -607,7 +607,7 @@ TEST_CASE("registerUriScheme writes the rpi-imager:// desktop entry", "[platform
     CHECK(PlatformQuirks::registerUriScheme() == true);
 
     const QString desktopPath = dataHome.path()
-        + "/applications/com.raspberrypi.rpi-imager-uri-handler.desktop";
+        + "/applications/gg.gleem.imager-uri-handler.desktop";
     QFile f(desktopPath);
     REQUIRE(f.exists());
     REQUIRE(f.open(QIODevice::ReadOnly));
@@ -616,7 +616,7 @@ TEST_CASE("registerUriScheme writes the rpi-imager:// desktop entry", "[platform
 
     const QString contents = QString::fromUtf8(firstWrite);
     // The entry must claim the scheme and point Exec at this executable with %u.
-    CHECK(contents.contains("MimeType=x-scheme-handler/rpi-imager;"));
+    CHECK(contents.contains("MimeType=x-scheme-handler/gleem-imager;"));
     CHECK(contents.contains("Exec="));
     CHECK(contents.contains("%u"));
     CHECK(contents.contains("NoDisplay=true"));
@@ -695,7 +695,7 @@ TEST_CASE("registerUriScheme is safe to call on macOS", "[platformquirks][macos]
 #ifdef Q_OS_WIN
 
 TEST_CASE("registerUriScheme is a runtime no-op on Windows", "[platformquirks][windows]") {
-    // The rpi-imager:// association is written to the registry by the installer,
+    // The gleem-imager:// association is written to the registry by the installer,
     // so the runtime call has nothing to do and reports success.
     CHECK(PlatformQuirks::registerUriScheme() == true);
 }
@@ -1418,7 +1418,7 @@ TEST_CASE("A policy filename is stable, unique and stays in its directory",
     // Two AppImages in different places do not share one.
     CHECK(nameA != QString::fromLatin1(b));
 
-    CHECK(nameA.startsWith(QStringLiteral("com.raspberrypi.rpi-imager.appimage-")));
+    CHECK(nameA.startsWith(QStringLiteral("gg.gleem.imager.appimage-")));
     CHECK(nameA.endsWith(QStringLiteral(".policy")));
 
     // It is joined onto a directory, so anything that looks like a path
@@ -1714,7 +1714,7 @@ TEST_CASE("A policy filename cannot escape the actions directory",
         INFO("name: " << name.toStdString());
         CHECK_FALSE(name.contains(QLatin1Char('/')));
         CHECK_FALSE(name.contains(QStringLiteral("..")));
-        CHECK(name.startsWith(QStringLiteral("com.raspberrypi.rpi-imager.appimage-")));
+        CHECK(name.startsWith(QStringLiteral("gg.gleem.imager.appimage-")));
         CHECK(name.endsWith(QStringLiteral(".policy")));
     }
 }
@@ -2164,9 +2164,9 @@ TEST_CASE("No GTK settings file is not a request for reduced motion",
 
 #ifdef Q_OS_LINUX
 // ══════════════════════════════════════════════════════════════
-// The rpi-imager:// handler, after the first time
+// The gleem-imager:// handler, after the first time
 //
-// The desktop entry is what makes a rpi-imager:// link open Imager with the
+// The desktop entry is what makes a gleem-imager:// link open Imager with the
 // link as an argument. Writing it fresh is covered above. What was not is
 // everything after that: an entry left by an older install at a path the
 // executable has moved away from, and a re-registration that cannot be
@@ -2201,7 +2201,7 @@ private:
 QString uriHandlerPath(const QString& dataHome)
 {
     return dataHome
-        + QStringLiteral("/applications/com.raspberrypi.rpi-imager-uri-handler.desktop");
+        + QStringLiteral("/applications/gg.gleem.imager-uri-handler.desktop");
 }
 
 QByteArray readAll(const QString& path)
@@ -2232,9 +2232,9 @@ TEST_CASE("A handler left by an older install is replaced", "[platformquirks][ur
         stale.write(
             "[Desktop Entry]\n"
             "Type=Application\n"
-            "Name=Raspberry Pi Imager\n"
+            "Name=Gleem Imager\n"
             "Exec=/opt/some-old-location/rpi-imager.AppImage %u\n"
-            "MimeType=x-scheme-handler/rpi-imager;\n");
+            "MimeType=x-scheme-handler/gleem-imager;\n");
     }
 
     CHECK(PlatformQuirks::registerUriScheme() == true);
@@ -2245,7 +2245,7 @@ TEST_CASE("A handler left by an older install is replaced", "[platformquirks][ur
     // Naming this executable, and still passing the URL on.
     CHECK(written.contains(QString::fromUtf8(PlatformQuirks::getBundlePath())));
     CHECK(written.contains(QStringLiteral("%u")));
-    CHECK(written.contains(QStringLiteral("MimeType=x-scheme-handler/rpi-imager;")));
+    CHECK(written.contains(QStringLiteral("MimeType=x-scheme-handler/gleem-imager;")));
 }
 
 TEST_CASE("A registration that cannot be written keeps the entry that worked",
@@ -2308,7 +2308,7 @@ TEST_CASE("A successful registration leaves no half-written files behind",
     REQUIRE(PlatformQuirks::registerUriScheme() == true);
 
     const QString entry =
-        QStringLiteral("com.raspberrypi.rpi-imager-uri-handler.desktop");
+        QStringLiteral("gg.gleem.imager-uri-handler.desktop");
     const QString appsDir = QFileInfo(uriHandlerPath(dataHome.path())).path();
     const QStringList left = QDir(appsDir).entryList(QDir::Files | QDir::Hidden);
     INFO(left.join(QStringLiteral(", ")).toStdString());
@@ -3507,7 +3507,7 @@ QByteArray policyGranting(const QString& execPath)
     return QStringLiteral(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<policyconfig>\n"
-        "  <action id=\"com.raspberrypi.rpi-imager.pkexec.run\">\n"
+        "  <action id=\"gg.gleem.imager.pkexec.run\">\n"
         "    <message>Authentication is required to write to a disk</message>\n"
         "    <defaults><allow_any>auth_admin</allow_any></defaults>\n"
         "    <annotate key=\"org.freedesktop.policykit.exec.path\">%1</annotate>\n"
@@ -3591,7 +3591,7 @@ TEST_CASE("A policy naming this binary is found", "[platformquirks][policy]")
     REQUIRE(etc.isValid());
     REQUIRE(usr.isValid());
     REQUIRE(writePolicyFile(etc.path() + QStringLiteral("/actions"),
-                            QStringLiteral("com.raspberrypi.rpi-imager.appimage-abc.policy"),
+                            QStringLiteral("gg.gleem.imager.appimage-abc.policy"),
                             policyGranting(bundle)));
 
     CHECK(policyInstalledWith(etc.path(), usr.path()) == 1);
@@ -3613,7 +3613,7 @@ TEST_CASE("The vendor directory is searched too", "[platformquirks][policy]")
     REQUIRE(usr.isValid());
     REQUIRE(QDir().mkpath(etc.path() + QStringLiteral("/actions")));
     REQUIRE(writePolicyFile(usr.path(),
-                            QStringLiteral("com.raspberrypi.rpi-imager.appimage-def.policy"),
+                            QStringLiteral("gg.gleem.imager.appimage-def.policy"),
                             policyGranting(bundle)));
 
     CHECK(policyInstalledWith(etc.path(), usr.path()) == 1);
@@ -3632,7 +3632,7 @@ TEST_CASE("Another AppImage's policy is not taken for ours",
     REQUIRE(etc.isValid());
     REQUIRE(usr.isValid());
     REQUIRE(writePolicyFile(etc.path() + QStringLiteral("/actions"),
-                            QStringLiteral("com.raspberrypi.rpi-imager.appimage-old.policy"),
+                            QStringLiteral("gg.gleem.imager.appimage-old.policy"),
                             policyGranting(QStringLiteral("/opt/elsewhere/rpi-imager.AppImage"))));
 
     CHECK(policyInstalledWith(etc.path(), usr.path()) == 0);
@@ -3920,7 +3920,7 @@ TEST_CASE("Installing a policy writes one naming this binary, and it is then fou
     const QStringList written = policyFilesIn(actions);
     REQUIRE(written.size() == 1);
     CHECK(written.first().startsWith(
-        QStringLiteral("com.raspberrypi.rpi-imager.appimage-")));
+        QStringLiteral("gg.gleem.imager.appimage-")));
 
     // And the round trip: what was written is what the check reads back.
     const QString check = runProbeInPolkitNamespace(QStringLiteral("policy"),
@@ -3942,7 +3942,7 @@ TEST_CASE("Installing sweeps away a policy for a binary that is gone",
     REQUIRE(usr.isValid());
     const QString actions = etc.path() + QStringLiteral("/actions");
     REQUIRE(writePolicyFile(actions,
-                            QStringLiteral("com.raspberrypi.rpi-imager.appimage-gone.policy"),
+                            QStringLiteral("gg.gleem.imager.appimage-gone.policy"),
                             policyGranting(QStringLiteral("/opt/deleted-appimage/rpi-imager.AppImage"))));
 
     runProbeInPolkitNamespace(QStringLiteral("install"), etc.path(), usr.path());
@@ -3950,7 +3950,7 @@ TEST_CASE("Installing sweeps away a policy for a binary that is gone",
     const QStringList left = policyFilesIn(actions);
     INFO(left.join(QStringLiteral(", ")).toStdString());
     CHECK_FALSE(left.contains(
-        QStringLiteral("com.raspberrypi.rpi-imager.appimage-gone.policy")));
+        QStringLiteral("gg.gleem.imager.appimage-gone.policy")));
 }
 
 TEST_CASE("Installing leaves alone a policy for a binary that is still there",
@@ -3967,7 +3967,7 @@ TEST_CASE("Installing leaves alone a policy for a binary that is still there",
     const QString actions = etc.path() + QStringLiteral("/actions");
     // /bin/sh stands in for the other copy: a path that certainly exists.
     REQUIRE(writePolicyFile(actions,
-                            QStringLiteral("com.raspberrypi.rpi-imager.appimage-other.policy"),
+                            QStringLiteral("gg.gleem.imager.appimage-other.policy"),
                             policyGranting(QStringLiteral("/bin/sh"))));
 
     runProbeInPolkitNamespace(QStringLiteral("install"), etc.path(), usr.path());
@@ -3975,7 +3975,7 @@ TEST_CASE("Installing leaves alone a policy for a binary that is still there",
     const QStringList left = policyFilesIn(actions);
     INFO(left.join(QStringLiteral(", ")).toStdString());
     CHECK(left.contains(
-        QStringLiteral("com.raspberrypi.rpi-imager.appimage-other.policy")));
+        QStringLiteral("gg.gleem.imager.appimage-other.policy")));
 }
 
 TEST_CASE("Installing does not touch somebody else's policy",
@@ -5655,15 +5655,15 @@ TEST_CASE("Stale policies are cleared out, and the ones in use are left alone",
     };
 
     // Five shapes, one per arm of the sweep.
-    policy(QStringLiteral("com.raspberrypi.rpi-imager.appimage-notag.policy"),
+    policy(QStringLiteral("gg.gleem.imager.appimage-notag.policy"),
            QStringLiteral("<action id=\"x\"><annotate key=\"other\">v</annotate></action>"));
-    policy(QStringLiteral("com.raspberrypi.rpi-imager.appimage-unclosed.policy"),
+    policy(QStringLiteral("gg.gleem.imager.appimage-unclosed.policy"),
            QStringLiteral("<annotate key=\"") + tag + QStringLiteral("/some/path"));
-    policy(QStringLiteral("com.raspberrypi.rpi-imager.appimage-empty.policy"),
+    policy(QStringLiteral("gg.gleem.imager.appimage-empty.policy"),
            QStringLiteral("<annotate key=\"") + tag + QStringLiteral("</annotate>"));
-    policy(QStringLiteral("com.raspberrypi.rpi-imager.appimage-current.policy"),
+    policy(QStringLiteral("gg.gleem.imager.appimage-current.policy"),
            QStringLiteral("<annotate key=\"") + tag + self + QStringLiteral("</annotate>"));
-    policy(QStringLiteral("com.raspberrypi.rpi-imager.appimage-gone.policy"),
+    policy(QStringLiteral("gg.gleem.imager.appimage-gone.policy"),
            QStringLiteral("<annotate key=\"") + tag
                + QStringLiteral("/nonexistent/rpi-imager.AppImage</annotate>"));
 
@@ -5684,16 +5684,16 @@ TEST_CASE("Stale policies are cleared out, and the ones in use are left alone",
     };
 
     // Gone: it named a binary that is not there any more.
-    CHECK_FALSE(present(QStringLiteral("com.raspberrypi.rpi-imager.appimage-gone.policy")));
+    CHECK_FALSE(present(QStringLiteral("gg.gleem.imager.appimage-gone.policy")));
 
     // Kept: this one is the copy running now.
-    CHECK(present(QStringLiteral("com.raspberrypi.rpi-imager.appimage-current.policy")));
+    CHECK(present(QStringLiteral("gg.gleem.imager.appimage-current.policy")));
 
     // Kept, because the sweep could not read a path out of them -- removing
     // a file it does not understand is not its business.
-    CHECK(present(QStringLiteral("com.raspberrypi.rpi-imager.appimage-notag.policy")));
-    CHECK(present(QStringLiteral("com.raspberrypi.rpi-imager.appimage-unclosed.policy")));
-    CHECK(present(QStringLiteral("com.raspberrypi.rpi-imager.appimage-empty.policy")));
+    CHECK(present(QStringLiteral("gg.gleem.imager.appimage-notag.policy")));
+    CHECK(present(QStringLiteral("gg.gleem.imager.appimage-unclosed.policy")));
+    CHECK(present(QStringLiteral("gg.gleem.imager.appimage-empty.policy")));
 
     // Kept, and not ours to touch.
     CHECK(present(QStringLiteral("org.example.something-else.policy")));

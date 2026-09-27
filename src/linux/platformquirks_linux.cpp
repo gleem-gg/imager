@@ -820,9 +820,9 @@ static bool generatePolkitPolicyFilename(const char* appImagePath, char* buffer,
     QByteArray pathBytes(appImagePath);
     QByteArray hash = QCryptographicHash::hash(pathBytes, QCryptographicHash::Md5).toHex();
     
-    // Create filename: com.raspberrypi.rpi-imager.appimage-HASH.policy
+    // Create filename: gg.gleem.imager.appimage-HASH.policy
     int written = std::snprintf(buffer, bufferSize, 
-        "com.raspberrypi.rpi-imager.appimage-%s.policy",
+        "gg.gleem.imager.appimage-%s.policy",
         hash.left(12).constData());  // Use first 12 chars of hash
     
     return written > 0 && static_cast<size_t>(written) < bufferSize;
@@ -968,7 +968,7 @@ bool hasElevationPolicyInstalled() {
 // Internal helper to remove stale polkit policy files left behind when the
 // AppImage was moved, renamed, or deleted. Called during policy installation
 // (which runs as root) so we have write access to the polkit directories.
-// Only touches files matching our naming convention (com.raspberrypi.rpi-imager.appimage-*.policy).
+// Only touches files matching our naming convention (gg.gleem.imager.appimage-*.policy).
 static void cleanupStalePolkitPolicies(const char* currentPath) {
     const QByteArray execPathTag("org.freedesktop.policykit.exec.path\">");
     const QByteArray closeTag("</annotate>");
@@ -979,7 +979,7 @@ static void cleanupStalePolkitPolicies(const char* currentPath) {
             continue;
 
         const QStringList policyFiles = dir.entryList(
-            QStringList() << QStringLiteral("com.raspberrypi.rpi-imager.appimage-*.policy"),
+            QStringList() << QStringLiteral("gg.gleem.imager.appimage-*.policy"),
             QDir::Files);
 
         for (const QString& filename : policyFiles) {
@@ -1083,7 +1083,7 @@ static bool installPolkitPolicyForPath(const char* appImagePath) {
     // Generate unique action ID based on path hash
     QByteArray pathBytes(appImagePath);
     QByteArray hash = QCryptographicHash::hash(pathBytes, QCryptographicHash::Md5).toHex();
-    QString actionId = QString("com.raspberrypi.rpi-imager.appimage.%1").arg(QString::fromUtf8(hash.left(12)));
+    QString actionId = QString("gg.gleem.imager.appimage.%1").arg(QString::fromUtf8(hash.left(12)));
     
     // Security: XML-escape the AppImage path to prevent XML injection attacks
     // An attacker-controlled path like "</annotate><evil>..." could break the XML
@@ -1099,8 +1099,8 @@ static bool installPolkitPolicyForPath(const char* appImagePath) {
         "  <vendor>Raspberry Pi Ltd</vendor>\n"
         "  <vendor_url>https://www.raspberrypi.com/</vendor_url>\n"
         "  <action id=\"%1\">\n"
-        "    <description>Run Raspberry Pi Imager</description>\n"
-        "    <message>Authentication is required to run Raspberry Pi Imager</message>\n"
+        "    <description>Run Gleem Imager</description>\n"
+        "    <message>Authentication is required to run Gleem Imager</message>\n"
         "    <icon_name>rpi-imager</icon_name>\n"
         "    <defaults>\n"
         "      <allow_any>auth_admin</allow_any>\n"
@@ -1940,7 +1940,7 @@ void clearAppImageEnvironment() {
 
 bool registerUriScheme() {
     // $APPIMAGE (set by the AppImage runtime) or the resolved /proc/self/exe.
-    // %u makes the OS pass the rpi-imager:// callback URL as an argument.
+    // %u makes the OS pass the gleem-imager:// callback URL as an argument.
     const char* bundle = getBundlePath();
     if (!bundle || bundle[0] == '\0') {
         qWarning() << "registerUriScheme: could not resolve executable path";
@@ -1953,17 +1953,17 @@ bool registerUriScheme() {
     const QString desktopContents = QStringLiteral(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=Raspberry Pi Imager\n"
+        "Name=Gleem Imager\n"
         "Exec=%1 %u\n"
         "Icon=rpi-imager\n"
         "Terminal=false\n"
         "NoDisplay=true\n"
-        "MimeType=x-scheme-handler/rpi-imager;\n").arg(execPath);
+        "MimeType=x-scheme-handler/gleem-imager;\n").arg(execPath);
     const QByteArray desktopBytes = desktopContents.toUtf8();
 
     const QString appsDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
                             + QStringLiteral("/applications");
-    const QString desktopName = QStringLiteral("com.raspberrypi.rpi-imager-uri-handler.desktop");
+    const QString desktopName = QStringLiteral("gg.gleem.imager-uri-handler.desktop");
     const QString desktopPath = appsDir + QLatin1Char('/') + desktopName;
 
     // Idempotent: if the entry already matches, assume registration is current
@@ -2012,9 +2012,9 @@ bool registerUriScheme() {
     runTool(QStringLiteral("update-desktop-database"), QStringList() << appsDir);
     runTool(QStringLiteral("xdg-mime"),
             QStringList() << QStringLiteral("default") << desktopName
-                          << QStringLiteral("x-scheme-handler/rpi-imager"));
+                          << QStringLiteral("x-scheme-handler/gleem-imager"));
 
-    qDebug() << "Registered rpi-imager:// scheme handler at" << desktopPath;
+    qDebug() << "Registered gleem-imager:// scheme handler at" << desktopPath;
     return true;
 }
 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=Gleem Imager
+Comment=Write Gleem IRL images to SD cards for the Orange Pi 5 Plus and Raspberry Pi
+Icon=gleem-imager
+Exec=/usr/bin/gleem-imager %u
+Categories=Utility;
+StartupNotify=false
+MimeType=x-scheme-handler/gleem-imager;application/vnd.gleem.imager-manifest+json;

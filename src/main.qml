@@ -39,7 +39,7 @@ ApplicationWindow {
     property bool isOffline: ImageWriterSingleton.isOsListUnavailable
     
     title: {
-        var baseTitle = qsTr("Raspberry Pi Imager %1").arg(ImageWriterSingleton.constantVersion())
+        var baseTitle = qsTr("Gleem Imager %1").arg(ImageWriterSingleton.constantVersion())
         if (isOffline) {
             baseTitle += " — " + qsTr("Offline")
         }
@@ -308,7 +308,7 @@ ApplicationWindow {
 
         FocusableText {
             id: quitMessage
-            text: qsTr("Raspberry Pi Imager is still busy. Are you sure you want to quit?")
+            text: qsTr("Gleem Imager is still busy. Are you sure you want to quit?")
             font.pointSize: Style.fontSizeDescription
             font.family: Style.fontFamily
             color: Style.textDescriptionColor
@@ -326,14 +326,14 @@ ApplicationWindow {
             ImButton {
                 id: quitNoButton
                 text: CommonStrings.no
-                accessibleDescription: qsTr("Return to Raspberry Pi Imager and continue the current operation")
+                accessibleDescription: qsTr("Return to Gleem Imager and continue the current operation")
                 activeFocusOnTab: true
                 onClicked: quitDialog.close()
             }
             ImButtonRed {
                 id: quitYesButton
                 text: CommonStrings.yes
-                accessibleDescription: qsTr("Force quit Raspberry Pi Imager and cancel the current write operation")
+                accessibleDescription: qsTr("Force quit Gleem Imager and cancel the current write operation")
                 activeFocusOnTab: true
                 onClicked: {
                     window.forceQuit = true;
@@ -434,7 +434,7 @@ ApplicationWindow {
             ImButton {
                 id: installAuthButton
                 text: qsTr("Install Authorization")
-                accessibleDescription: qsTr("Install system authorization to allow Raspberry Pi Imager to run with elevated privileges")
+                accessibleDescription: qsTr("Install system authorization to allow Gleem Imager to run with elevated privileges")
                 activeFocusOnTab: true
                 visible: ImageWriterSingleton && ImageWriterSingleton.isElevatableBundle()
                 // Make button wide enough to fit the text, with sensible bounds
@@ -452,7 +452,7 @@ ApplicationWindow {
             ImButtonRed {
                 id: exitButton
                 text: qsTr("Exit")
-                accessibleDescription: qsTr("Exit Raspberry Pi Imager - you must restart with elevated privileges to write images")
+                accessibleDescription: qsTr("Exit Gleem Imager - you must restart with elevated privileges to write images")
                 activeFocusOnTab: true
                 onClicked: Qt.quit()
             }

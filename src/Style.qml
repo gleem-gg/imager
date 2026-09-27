@@ -28,23 +28,24 @@ Item {
 
     // === COLORS ===
     readonly property color mainBackgroundColor: "#ffffff"
-    readonly property color raspberryRed: "#ab1e3a"
+    // Gleem Imager: the Raspberry red slots carry the gleem.gg brand violet.
+    readonly property color raspberryRed: "#7c3aed"
     readonly property color transparent: "transparent"
 
     readonly property color buttonBackgroundColor: mainBackgroundColor
     readonly property color buttonForegroundColor: raspberryRed
-    readonly property color buttonFocusedBackgroundColor: "#d1dcfb"
+    readonly property color buttonFocusedBackgroundColor: "#ddd6fe"
     readonly property color buttonHoveredBackgroundColor: "#f2f2f2"
 
     readonly property color button2BackgroundColor: raspberryRed
     readonly property color button2ForegroundColor: mainBackgroundColor
     // Focused: noticeably darker for strong state indication (keyboard focus)
-    readonly property color button2FocusedBackgroundColor: "#8f122c"
+    readonly property color button2FocusedBackgroundColor: "#5b21b6"
     // Hovered: noticeably lighter to differentiate from base (≥4.5:1 contrast vs base)
-    readonly property color button2HoveredBackgroundColor: "#eac7ce"
+    readonly property color button2HoveredBackgroundColor: "#ede9fe"
     // Hovered foreground should be Raspberry Red for ≥4.5:1 contrast on the light hover bg
     readonly property color button2HoveredForegroundColor: raspberryRed
-    readonly property color raspberryRedHighlight: "#d64561"
+    readonly property color raspberryRedHighlight: "#8b5cf6"
 
     readonly property color titleBackgroundColor: "#f5f5f5"
     readonly property color titleSeparatorColor: "#afafaf"
@@ -53,7 +54,7 @@ Item {
     readonly property color listViewRowBackgroundColor: "#ffffff"
     readonly property color listViewHoverRowBackgroundColor: titleBackgroundColor
     // Selection highlight color for OS/device lists
-    readonly property color listViewHighlightColor: "#BACCE7"
+    readonly property color listViewHighlightColor: "#ddd6fe"
 
     // Utility translucent colors
     readonly property color translucentWhite10: Qt.rgba(255, 255, 255, 0.1)
@@ -91,7 +92,7 @@ Item {
     readonly property color formLabelErrorColor: "red"
     readonly property color formLabelDisabledColor: "grey"
     // Active color for radio buttons, checkboxes, and switches
-    readonly property color formControlActiveColor: "#1955AE"
+    readonly property color formControlActiveColor: "#6d28d9"
 
     readonly property color embeddedModeInfoTextColor: "#ffffff"
 

@@ -101,7 +101,7 @@ TEST_CASE("The relay hands a callback URL to the running instance",
     FakeImager imager;
     REQUIRE_PORT(imager);
 
-    const QString url = QStringLiteral("rpi-imager://open?token=abc123");
+    const QString url = QStringLiteral("gleem-imager://open?token=abc123");
     REQUIRE(runRelay(url) == 0);
 
     CHECK(imager.awaitDelivery() == url.toUtf8());
@@ -118,7 +118,7 @@ TEST_CASE("The URL arrives as UTF-8, not as a narrowed approximation",
     REQUIRE_PORT(imager);
 
     const QString url =
-        QStringLiteral("rpi-imager://open?name=測試-файл");
+        QStringLiteral("gleem-imager://open?name=測試-файл");
     REQUIRE(runRelay(url) == 0);
 
     const QByteArray got = imager.awaitDelivery();
@@ -149,7 +149,7 @@ TEST_CASE("Nothing is sent for a URL carrying a control character",
     FakeImager imager;
     REQUIRE_PORT(imager);
 
-    CHECK(runRelay(QStringLiteral("rpi-imager://open\nsecond-line")) == 0);
+    CHECK(runRelay(QStringLiteral("gleem-imager://open\nsecond-line")) == 0);
     CHECK(imager.awaitDelivery(1500).isEmpty());
 }
 
@@ -273,7 +273,7 @@ TEST_CASE("With no Imager listening, the relay starts the one beside it",
         SKIP("the relay could not be copied to a directory of its own");
     REQUIRE(scratch.installProbe());
 
-    const QString url = QStringLiteral("rpi-imager://open?token=launched123");
+    const QString url = QStringLiteral("gleem-imager://open?token=launched123");
     CHECK(scratch.run(url) == 0);
 
     // The URL reaches it as one argument. Quoted by ShellExecuteEx, so the
@@ -298,6 +298,6 @@ TEST_CASE("A relay with no Imager beside it launches nothing",
     if (!scratch.isReady())
         SKIP("the relay could not be copied to a directory of its own");
 
-    CHECK(scratch.run(QStringLiteral("rpi-imager://open?token=nothing")) == 0);
+    CHECK(scratch.run(QStringLiteral("gleem-imager://open?token=nothing")) == 0);
     CHECK(scratch.launchedWith(1500).isEmpty());
 }
