@@ -22,7 +22,7 @@ if(GIT_EXECUTABLE)
     # carries upstream's vX.Y.Z tags, and after merging upstream one of those
     # could be the nearest and pass itself off as a Gleem Imager version.
     execute_process(
-        COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty
+        COMMAND "${GIT_EXECUTABLE}" describe --tags --always
                 --match "gleem-v[0-9]*"
         WORKING_DIRECTORY "${SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_DESCRIBE
@@ -32,6 +32,19 @@ if(GIT_EXECUTABLE)
     )
     if(GIT_RESULT EQUAL 0 AND GIT_DESCRIBE)
         string(REGEX REPLACE "^gleem-" "" VERSION_STR "${GIT_DESCRIBE}")
+        # -dirty only for changes to Gleem Imager itself. The build patches
+        # the vendored dependencies in their submodules (libarchive), which
+        # `describe --dirty` would count, so every build called itself dirty.
+        execute_process(COMMAND "${GIT_EXECUTABLE}" update-index -q --refresh
+            WORKING_DIRECTORY "${SOURCE_DIR}" OUTPUT_QUIET ERROR_QUIET)
+        execute_process(
+            COMMAND "${GIT_EXECUTABLE}" diff-index --quiet --ignore-submodules=all HEAD --
+            WORKING_DIRECTORY "${SOURCE_DIR}"
+            RESULT_VARIABLE GIT_DIRTY
+            OUTPUT_QUIET ERROR_QUIET)
+        if(NOT GIT_DIRTY EQUAL 0)
+            string(APPEND VERSION_STR "-dirty")
+        endif()
     endif()
 endif()
 

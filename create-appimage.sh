@@ -92,7 +92,11 @@ SOURCE_DIR="src/"
 CMAKE_FILE="${SOURCE_DIR}CMakeLists.txt"
 
 # Get version from git tag (same approach as CMake)
-GIT_VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "0.0.0-unknown")
+# Gleem Imager: only gleem-vX.Y.Z tags, without the prefix; changes the build
+# makes inside the vendored submodules do not count (see GenerateVersion.cmake).
+GIT_VERSION=$(git describe --tags --always --match "gleem-v[0-9]*" 2>/dev/null | sed 's/^gleem-//' || echo "0.0.0-unknown")
+[ -n "$GIT_VERSION" ] || GIT_VERSION="0.0.0-unknown"
+git diff-index --quiet --ignore-submodules=all HEAD -- 2>/dev/null || GIT_VERSION="$GIT_VERSION-dirty"
 
 # Extract numeric version components for compatibility
 # Match versions like: v1.2.3, 1.2.3, v1.2.3-extra, etc.

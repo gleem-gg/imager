@@ -106,9 +106,11 @@ osslsigncode verify -CAfile "$CA_BUNDLE" -TSA-CAfile "$CA_BUNDLE" -in "$signed" 
     cat "$work/verify.txt" >&2
     die "the signature does not verify"
 }
-case "$(basename "$signed")" in
-    *-dirty.exe|*-g[0-9a-f]*.exe) die "$(basename "$signed") is not a clean release build" ;;
-esac
+for f in "$signed" "$appimage"; do
+    case "$(basename "$f")" in
+        *-dirty*|*-g[0-9a-f]*) die "$(basename "$f") is not a clean release build" ;;
+    esac
+done
 say "Signature verifies"
 
 cp "$appimage" "$work/dist/"

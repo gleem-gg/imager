@@ -52,6 +52,10 @@ jobs:
       - name: Build the AppImage
         env:
           APPIMAGE_EXTRACT_AND_RUN: '1'
+          # linuxdeploy-plugin-qt deploys only the xcb platform plugin unless
+          # told otherwise; without libqwayland.so every Wayland session ran on
+          # XWayland. create-appimage.sh already copies the shell integrations.
+          EXTRA_PLATFORM_PLUGINS: libqwayland.so
         run: ./create-appimage.sh --arch=x86_64 --qt-root="$QT_ROOT_DIR"
 
       - name: Tracked files the build changed
