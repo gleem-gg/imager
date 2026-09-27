@@ -1,0 +1,11 @@
+Gleem Imager
+Copyright (C) 2026 Gleem
+
+This product is a modified version of Raspberry Pi Imager,
+Copyright (C) 2020-2026 Raspberry Pi Ltd, licensed under the Apache License,
+Version 2.0 (see license.txt). Gleem changed its name, branding, default image
+repository, identifiers, installer and telemetry settings; the files it changed
+are listed by `git diff main...gleem` in https://github.com/gleem-gg/imager.
+
+Gleem Imager is not affiliated with or endorsed by Raspberry Pi Ltd.
+"Raspberry Pi" is a trademark of Raspberry Pi Ltd.

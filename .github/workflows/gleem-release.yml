@@ -1,0 +1,184 @@
+# Builds Gleem Imager for Windows and Linux, and publishes to get.gleem.gg.
+#
+# - Every push to `gleem` and every pull request builds both and keeps the
+#   results as workflow artifacts.
+# - A `gleem-vX.Y.Z` tag also publishes them to
+#   https://get.gleem.gg/imager/vX.Y.Z/ and moves `imager/latest` there.
+# - A push to `gleem` that changes gleem/ publishes the OS list and its icons
+#   to https://get.gleem.gg/imager/.
+#
+# Secrets: BUNNY_STORAGE_PASSWORD (storage zone gleem-cli only). Windows
+# signing is optional: WINDOWS_CERT_PFX (base64 of the .pfx) and
+# WINDOWS_CERT_PASSWORD; without them the installer is built unsigned.
+name: Gleem Imager
+
+on:
+  push:
+    branches: [gleem]
+    tags: ['gleem-v*']
+  pull_request:
+    branches: [gleem]
+  workflow_dispatch:
+
+env:
+  QT_VERSION: 6.11.1
+
+jobs:
+  linux:
+    name: Linux AppImage
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the version comes from gleem-v tags
+
+      - name: Build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config file fuse libfuse2 \
+            libgnutls28-dev libudev-dev liburing-dev libdbus-1-dev libglib2.0-dev \
+            libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libxkbcommon-dev \
+            libxkbcommon-x11-dev libfontconfig1-dev libfreetype6-dev libx11-xcb-dev \
+            libxcb1-dev libxcb-cursor-dev libxcb-icccm4-dev libxcb-image0-dev \
+            libxcb-keysyms1-dev libxcb-randr0-dev libxcb-render-util0-dev \
+            libxcb-shape0-dev libxcb-xinerama0-dev libxcb-xkb-dev libwayland-dev
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: linux_gcc_64
+          modules: qtimageformats
+          cache: true
+
+      - name: Build the AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+        run: ./create-appimage.sh --arch=x86_64 --qt-root="$QT_ROOT_DIR"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: Gleem_Imager-*.AppImage
+          if-no-files-found: error
+
+  windows:
+    name: Windows installer
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: win64_mingw
+          tools: tools_mingw1310
+          modules: qtimageformats
+          cache: true
+
+      - name: Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Import the signing certificate
+        id: cert
+        shell: pwsh
+        env:
+          PFX: ${{ secrets.WINDOWS_CERT_PFX }}
+          PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        run: |
+          if (-not $env:PFX) { "signed=OFF" >> $env:GITHUB_OUTPUT; exit 0 }
+          $path = Join-Path $env:RUNNER_TEMP cert.pfx
+          [IO.File]::WriteAllBytes($path, [Convert]::FromBase64String($env:PFX))
+          $secure = ConvertTo-SecureString $env:PASSWORD -AsPlainText -Force
+          Import-PfxCertificate -FilePath $path -CertStoreLocation Cert:\CurrentUser\My -Password $secure | Out-Null
+          Remove-Item $path
+          "signed=ON" >> $env:GITHUB_OUTPUT
+
+      - name: Build
+        shell: pwsh
+        run: |
+          $mingw = Join-Path $env:IQTA_TOOLS 'mingw1310_64'
+          $env:PATH = "$mingw\bin;$env:PATH"
+          cmake -S src -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
+            -DQt6_ROOT="$env:QT_ROOT_DIR" -DMINGW64_ROOT="$mingw" `
+            -DENABLE_INNO_INSTALLER=ON -DIMAGER_SIGNED_APP=${{ steps.cert.outputs.signed }}
+          cmake --build build --parallel
+          cmake --build build --target inno_installer
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: build/installer/gleem-imager-*.exe
+          if-no-files-found: error
+
+  publish:
+    name: Publish to get.gleem.gg
+    if: startsWith(github.ref, 'refs/tags/gleem-v')
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Upload
+        env:
+          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${TAG#gleem-}"
+          storage="https://storage.bunnycdn.com/gleem-cli/imager"
+          put() {
+            curl -fsS -X PUT -H "AccessKey: $BUNNY_STORAGE_PASSWORD" \
+              -H "Content-Type: application/octet-stream" --data-binary @"$1" "$storage/$2"
+            echo "  $2"
+          }
+          # A published version is never replaced: files are cached for 30 days.
+          if curl -fsS -H "AccessKey: $BUNNY_STORAGE_PASSWORD" "$storage/$version/" | grep -q '"ObjectName"'; then
+            echo "$version is already published" >&2; exit 1
+          fi
+          cd dist
+          sha256sum * > SHA256SUMS
+          for f in *; do put "$f" "$version/$f"; done
+          printf '%s\n' "$version" > latest
+          put latest latest
+
+  oslist:
+    name: Publish the OS list
+    if: github.event_name == 'push' && github.ref == 'refs/heads/gleem'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Changed?
+        id: changed
+        run: |
+          if git diff --quiet HEAD^ HEAD -- gleem/; then echo "publish=no" >> "$GITHUB_OUTPUT"; else echo "publish=yes" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Validate against the schema
+        if: steps.changed.outputs.publish == 'yes'
+        run: |
+          pip install -q jsonschema
+          python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('gleem/os_list.json')), json.load(open('doc/json-schema/os-list-schema.json')))"
+
+      - name: Upload
+        if: steps.changed.outputs.publish == 'yes'
+        env:
+          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          storage="https://storage.bunnycdn.com/gleem-cli/imager"
+          put() {
+            curl -fsS -X PUT -H "AccessKey: $BUNNY_STORAGE_PASSWORD" \
+              -H "Content-Type: $2" --data-binary @"$1" "$storage/$3"
+            echo "  $3"
+          }
+          # Icons first: the list refers to them. The list is cached for 60 s.
+          for f in gleem/icons/*.png; do put "$f" image/png "icons/$(basename "$f")"; done
+          put gleem/os_list.json application/json os_list.json

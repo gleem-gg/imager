@@ -1,60 +1,40 @@
-# Raspberry Pi Imager
+# Gleem Imager
 
-![](./screenshot.png)
+Gleem Imager writes the [Gleem IRL](https://gleem.gg) image to an SD card for
+the Orange Pi 5 Plus (Raspberry Pi 4 and 5 are planned). Pick your board, pick
+the image, pick the card: it downloads the image from `get.gleem.gg`, writes it
+and verifies it.
 
-Raspberry Pi Imaging Utility
+Downloads for Windows and Linux (AppImage) are on
+[get.gleem.gg/imager](https://get.gleem.gg/imager/).
 
-- To install on Raspberry Pi OS, use `sudo apt update && sudo apt install rpi-imager`.
-- Download the latest version for Windows, macOS and Ubuntu from the [Raspberry Pi downloads page](https://www.raspberrypi.com/software/).
+## Based on Raspberry Pi Imager
 
-## How to install and use Raspberry Pi Imager
+Gleem Imager is a modified version of
+[Raspberry Pi Imager](https://github.com/raspberrypi/rpi-imager) by Raspberry Pi
+Ltd, used under the Apache License 2.0 (see [license.txt](license.txt) and
+[NOTICE](NOTICE)). It is **not affiliated with, endorsed by or supported by
+Raspberry Pi Ltd**. "Raspberry Pi" is a trademark of Raspberry Pi Ltd.
 
-Please see our [official documentation](https://www.raspberrypi.com/documentation/computers/getting-started.html#raspberry-pi-imager).
+What differs from upstream:
 
-## Development
+- Name, icons and colours are Gleem's; the settings, the `gleem-imager://` link
+  handler and the `.gleem-imager-manifest` file type are its own, so it can be
+  installed next to Raspberry Pi Imager without either affecting the other.
+- The image list comes from `https://get.gleem.gg/imager/os_list.json`
+  ([gleem/os_list.json](gleem/os_list.json)).
+- No telemetry: the download counter is off and has no address to send to.
+- Raspberry Pi Connect and the options for it are hidden. OS customisation only
+  appears for images that ask for it, and Gleem's images do not.
+- The Windows installer has its own AppId and never touches a Raspberry Pi
+  Imager installation.
+- The version comes only from `gleem-vX.Y.Z` tags.
 
-To build Raspberry Pi Imager from source-code, see our separate instructions in [CONTRIBUTING.md](./CONTRIBUTING.md)
+The upstream README is in [README.upstream.md](README.upstream.md); building
+works the same way (see [BUILDING.md](BUILDING.md)), and the binary is called
+`gleem-imager`.
 
-For the Linux release pipeline — the rootless, multi-architecture chroot build that produces the AppImages and `.deb` packages — see [doc/linux-build.md](./doc/linux-build.md).
+## Updating from upstream
 
-## Other notes
-
-### Custom repository
-
-If the application is started with "--repo [your own URL]" it will use a custom image repository.
-So can simply create another 'start menu shortcut' to the application with that parameter to use the application with your own images.
-
-### Anonymous metrics (telemetry)
-
-#### Why and what
-
-In order to understand usage of the application (e.g. uptake of Raspberry Pi Imager versions and which images and operating systems are most popular), Raspberry Pi Imager collects anonymous metrics (telemetry) by default. These metrics are used to prioritise and justify work on the Raspberry Pi Imager, and contain the following information:
-
-- The URL of the OS you have selected
-- The category of the OS you have selected
-- The observed name of the OS you have selected
-- The version of Raspberry Pi Imager
-- A flag to say if Raspberry Pi Imager is being used on the Desktop or as part of the Network Installer
-- The host operating system version (e.g. Windows 11)
-- The host operating system architecture (e.g. arm64, x86_64)
-- The host operating system locale name (e.g. en-GB)
-
-If the Raspberry Pi Imager is being run a part of the Network Installer, Imager will also collect the revision of Raspberry Pi it is running on.
-
-#### Where is it stored
-
-This web service is hosted by [Heroku](https://www.heroku.com) and only stores an incrementing counter using a [Redis Sorted Set](https://redis.io/topics/data-types#sorted-sets) for each URL, operating system name and category per day in the `eu-west-1` region and does not associate any personal data with those counts. This allows us to query the number of downloads over time and nothing else.
-
-The last 1,500 requests to the service are logged for one week before expiring as this is the [minimum log retention period for Heroku](https://devcenter.heroku.com/articles/logging#log-history-limits).
-
-#### Viewing the data
-
-As the data is stored in aggregate form, only aggregate data is available to any viewer. See what we see at: [rpi-imager-stats](https://rpi-imager-stats.raspberrypi.com)
-
-#### Opting out
-
-The most convenient way to opt-out of anonymous metric collection is via the Raspberry Pi Imager UI:
-
-- Select "App Options"
-- Untoggle "Enable anonymous statistics (telemetry) collection"
-- Press "Save"
+`main` tracks `raspberrypi/rpi-imager`; the Gleem changes live on `gleem`.
+Merge `main` into `gleem` to pick up upstream fixes.
