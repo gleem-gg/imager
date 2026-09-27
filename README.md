@@ -1,6 +1,6 @@
 # Gleem Imager
 
-Gleem Imager writes the [Gleem IRL](https://gleem.gg) image to an SD card for
+Gleem Imager writes the [Gleem IRL Sidekick](https://gleem.gg/irl-sidekick) image to an SD card for
 the Orange Pi 5 Plus (Raspberry Pi 4 and 5 are planned). Pick your board, pick
 the image, pick the card: it downloads the image from `get.gleem.gg`, writes it
 and verifies it.

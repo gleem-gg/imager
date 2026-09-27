@@ -4,10 +4,10 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>Apache-2.0</project_license>
   <name>Gleem Imager</name>
-  <summary>Write Gleem IRL images to SD cards</summary>
+  <summary>Write Gleem IRL Sidekick images to SD cards</summary>
   <description>
     <p>
-      Gleem Imager writes the Gleem IRL image for the Orange Pi 5 Plus and the
+      Gleem Imager writes the Gleem IRL Sidekick image for the Orange Pi 5 Plus and the
       Raspberry Pi to an SD card. It downloads the list of current images from
       get.gleem.gg, writes the chosen one straight to the card and verifies it.
     </p>

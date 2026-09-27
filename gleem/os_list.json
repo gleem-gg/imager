@@ -15,7 +15,7 @@
   },
   "os_list": [
     {
-      "name": "Gleem IRL",
+      "name": "Gleem IRL Sidekick",
       "description": "IRL streaming with SRTLA2 bonding, remote control from gleem.gg and self-updates",
       "icon": "https://get.gleem.gg/imager/icons/gleem-irl.png",
       "url": "https://get.gleem.gg/irl/orangepi5-plus/v2026.09.27/Armbian_26.8.2_Orangepi5-plus_trixie_vendor_6.1.115_minimal.img.xz",
