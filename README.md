@@ -43,8 +43,9 @@ Merge `main` into `gleem` to pick up upstream fixes.
 
 1. Tag `gleem-vX.Y.Z` on `gleem` and push the tag. CI builds the Windows
    installer (unsigned) and the Linux AppImage.
-2. With the code-signing token plugged in, run
-   `PKCS11_MODULE=/path/to/token-pkcs11.so gleem/release.sh gleem-vX.Y.Z`.
+2. With the Certum code-signing card plugged in (and proCertumCardManager
+   installed in /opt), run `gleem/release.sh gleem-vX.Y.Z` and enter the
+   card's PIN when asked.
    It signs the installer, verifies it and publishes both to
    `get.gleem.gg/imager/vX.Y.Z/`, moving `imager/latest` last.
 3. Raise `imager.latest_version` in `gleem/os_list.json` so running copies

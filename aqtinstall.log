@@ -1,0 +1,17 @@
+2026-09-27 20:13:14,608 - aqt.main - INFO - installer 140703267883968 aqtinstall(aqt) v3.3.0 on Python 3.14.7 [CPython GCC 16.1.1 20260515 (Red Hat 16.1.1-2)]
+2026-09-27 20:13:14,942 - aqt.helper - DEBUG - helper 140099387526080 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111/Updates.xml.sha256
+2026-09-27 20:13:15,324 - aqt.helper - DEBUG - helper 140099387526080 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111/Updates.xml.sha256
+2026-09-27 20:13:15,625 - aqt.helper - DEBUG - helper 140099387526080 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111/Updates.xml.sha256
+2026-09-27 20:13:15,896 - aqt.helper - DEBUG - helper 140099387526080 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111/Updates.xml.sha256
+2026-09-27 20:13:16,196 - aqt.helper - DEBUG - helper 140099387526080 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111/Updates.xml.sha256
+2026-09-27 20:13:16,508 - aqt.main - ERROR - installer 140099387526080 Failed to download checksum for the file 'Updates.xml' from mirrors '['https://download.qt.io']
+==============================Suggested follow-up:==============================
+* Check your internet connection
+* Consider modifying `requests.max_retries_to_retrieve_hash` in settings.ini
+* Consider modifying `mirrors.trusted_mirrors` in settings.ini (see https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)
+* Please use 'aqt list-qt windows desktop' to show versions of Qt available.
+2026-09-27 20:13:45,360 - aqt.main - INFO - installer 140295443073984 aqtinstall(aqt) v3.3.1.dev166 on Python 3.14.7 [CPython GCC 16.1.1 20260515 (Red Hat 16.1.1-2)]
+2026-09-27 20:13:45,870 - aqt.helper - DEBUG - helper 140560887958464 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111_mingw/Updates.xml.sha256
+2026-09-27 20:13:46,535 - aqt.helper - DEBUG - helper 140560887958464 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111_llvm_mingw/Updates.xml.sha256
+2026-09-27 20:13:47,333 - aqt.helper - DEBUG - helper 140560887958464 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111_msvc2022_64/Updates.xml.sha256
+2026-09-27 20:13:47,935 - aqt.helper - DEBUG - helper 140560887958464 Attempt to download checksum at https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/qt6_6111_msvc2022_arm64_cross_compiled/Updates.xml.sha256

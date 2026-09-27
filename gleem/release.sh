@@ -15,10 +15,14 @@
 # A published version is never replaced: get.gleem.gg caches it for 30 days.
 #
 # Needs gh, jq, curl, sha256sum and osslsigncode, plus the token's PKCS#11
-# module. Environment:
-#   PKCS11_MODULE   the token's PKCS#11 library (required)
-#   PKCS11_KEY      PKCS#11 URI of the signing key  (default: first private key)
-#   PKCS11_CERT     PKCS#11 URI of its certificate  (default: first certificate)
+# module. The defaults are for the Certum card in the ACR40T reader: its
+# "standard" profile (sc30pkcs11 from proCertumCardManager) holds the
+# "Open Source Developer René Preuß" code-signing certificate, valid until
+# 2027-03-11. The card's "secure" profile is a different one and not used.
+# Environment:
+#   PKCS11_MODULE   the token's PKCS#11 library
+#   PKCS11_KEY      PKCS#11 URI of the signing key
+#   PKCS11_CERT     PKCS#11 URI of its certificate
 #   TIMESTAMP_URL   default http://time.certum.pl
 #   BUNNY_STORAGE_PASSWORD  storage zone password; fetched with ~/.bunny-api-key if unset
 #   DRY_RUN=1       sign and verify, but upload nothing
@@ -40,9 +44,13 @@ version="${tag#gleem-}"
 for tool in gh jq curl sha256sum osslsigncode; do
     command -v "$tool" >/dev/null || die "$tool is not installed"
 done
-[[ -n "${PKCS11_MODULE:-}" && -r "$PKCS11_MODULE" ]] || die "set PKCS11_MODULE to the token's PKCS#11 library"
-PKCS11_KEY="${PKCS11_KEY:-pkcs11:type=private}"
-PKCS11_CERT="${PKCS11_CERT:-pkcs11:type=cert}"
+if [[ -z "${PKCS11_MODULE:-}" ]]; then
+    PKCS11_MODULE="$(ls /opt/proCertumCardManager/sc30pkcs11-*.so 2>/dev/null | sort -V | tail -1)"
+fi
+[[ -n "$PKCS11_MODULE" && -r "$PKCS11_MODULE" ]] || die "set PKCS11_MODULE to the token's PKCS#11 library"
+certum="pkcs11:token=profil%20standardowy;id=%f0%a5%f7%cf%02%39%27%39%f9%76%99%83%ec%c6%48%ae%34%82%65%bc"
+PKCS11_KEY="${PKCS11_KEY:-$certum;type=private}"
+PKCS11_CERT="${PKCS11_CERT:-$certum;type=cert}"
 TIMESTAMP_URL="${TIMESTAMP_URL:-http://time.certum.pl}"
 
 work="$(mktemp -d)"
