@@ -24,6 +24,8 @@
 #   PKCS11_KEY      PKCS#11 URI of the signing key
 #   PKCS11_CERT     PKCS#11 URI of its certificate
 #   TIMESTAMP_URL   default http://time.certum.pl
+#   CA_BUNDLE       system roots to check the signature against (default:
+#                   Fedora's or Debian's bundle)
 #   BUNNY_STORAGE_PASSWORD  storage zone password; fetched with ~/.bunny-api-key if unset
 #   DRY_RUN=1       sign and verify, but upload nothing
 
@@ -52,20 +54,34 @@ certum="pkcs11:token=profil%20standardowy;id=%f0%a5%f7%cf%02%39%27%39%f9%76%99%8
 PKCS11_KEY="${PKCS11_KEY:-$certum;type=private}"
 PKCS11_CERT="${PKCS11_CERT:-$certum;type=cert}"
 TIMESTAMP_URL="${TIMESTAMP_URL:-http://time.certum.pl}"
+here="$(cd "$(dirname "$0")" && pwd)"
+# Embedded in the signature so Windows can build the chain without fetching
+# it: Certum Code Signing 2021 CA, issued by Certum Trusted Network CA 2.
+intermediate="$here/certs/certum-code-signing-2021-ca.pem"
+if [[ -z "${CA_BUNDLE:-}" ]]; then
+    for f in /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/certs/ca-certificates.crt; do
+        [[ -r "$f" ]] && CA_BUNDLE="$f" && break
+    done
+fi
+[[ -r "${CA_BUNDLE:-}" ]] || die "set CA_BUNDLE to the system's root certificates"
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
-say "Waiting for the CI run of $tag"
+# The run of this tag at the commit it points at now: a moved tag leaves the
+# old runs behind, and the branch's run of the same commit was built before
+# the tag existed, so it carries another version.
+commit="$(gh api "repos/$REPO/commits/$tag" -q .sha)" || die "no tag $tag on GitHub"
+say "Waiting for the CI run of $tag ($commit)"
 run=""
 for _ in $(seq 60); do
-    run="$(gh run list -R "$REPO" -w "$WORKFLOW" --branch "$tag" -L 1 \
-        --json databaseId,status,conclusion -q '.[0] | select(.) | "\(.databaseId) \(.status) \(.conclusion)"')"
+    run="$(gh run list -R "$REPO" -w "$WORKFLOW" --commit "$commit" --event push -L 20 \
+        --json databaseId,headBranch -q "[.[] | select(.headBranch == \"$tag\")][0].databaseId // empty")"
     [[ -n "$run" ]] && break
     sleep 10
 done
 [[ -n "$run" ]] || die "no CI run for $tag; was the tag pushed?"
-id="${run%% *}"
+id="$run"
 gh run watch "$id" -R "$REPO" --exit-status >/dev/null || die "CI run $id did not succeed"
 
 say "Downloading the build of run $id"
@@ -81,11 +97,18 @@ osslsigncode sign \
     -pkcs11module "$PKCS11_MODULE" \
     -pkcs11cert "$PKCS11_CERT" \
     -key "$PKCS11_KEY" \
+    -ac "$intermediate" \
     -h sha256 \
     -n "Gleem Imager" -i "https://gleem.gg" \
     -ts "$TIMESTAMP_URL" \
     -in "$installer" -out "$signed"
-osslsigncode verify -in "$signed" >/dev/null || die "the signature does not verify"
+osslsigncode verify -CAfile "$CA_BUNDLE" -TSA-CAfile "$CA_BUNDLE" -in "$signed" >"$work/verify.txt" 2>&1 || {
+    cat "$work/verify.txt" >&2
+    die "the signature does not verify"
+}
+case "$(basename "$signed")" in
+    *-dirty.exe|*-g[0-9a-f]*.exe) die "$(basename "$signed") is not a clean release build" ;;
+esac
 say "Signature verifies"
 
 cp "$appimage" "$work/dist/"
