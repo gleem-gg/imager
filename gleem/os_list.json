@@ -10,6 +10,22 @@
         "description": "Rockchip RK3588 with HDMI input",
         "matching_type": "exclusive",
         "capabilities": []
+      },
+      {
+        "name": "Raspberry Pi 5",
+        "tags": ["pi5-64bit"],
+        "icon": "https://get.gleem.gg/imager/icons/raspberrypi.png",
+        "description": "Software H.264, USB HDMI capture card",
+        "matching_type": "exclusive",
+        "capabilities": []
+      },
+      {
+        "name": "Raspberry Pi 4",
+        "tags": ["pi4-64bit"],
+        "icon": "https://get.gleem.gg/imager/icons/raspberrypi.png",
+        "description": "Hardware H.264, USB HDMI capture card",
+        "matching_type": "exclusive",
+        "capabilities": []
       }
     ]
   },
