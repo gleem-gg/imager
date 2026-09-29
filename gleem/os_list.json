@@ -40,6 +40,17 @@
       "image_download_size": 510768640,
       "release_date": "2026-09-27",
       "devices": ["opi5plus"]
+    },
+    {
+      "name": "Gleem IRL Sidekick",
+      "description": "IRL streaming with SRTLA2 bonding, remote control from gleem.gg and self-updates",
+      "icon": "https://get.gleem.gg/imager/icons/gleem-irl.png",
+      "url": "https://get.gleem.gg/irl/raspberrypi/v1.0.0/2026-09-15-raspios-trixie-arm64-lite.img.xz",
+      "extract_size": 4135583744,
+      "extract_sha256": "705cc4977525dde8d36b26ff95c2f19a4bc831f48318845c75a4be5a483d7197",
+      "image_download_size": 1011239912,
+      "release_date": "2026-09-29",
+      "devices": ["pi4-64bit", "pi5-64bit"]
     }
   ]
 }
