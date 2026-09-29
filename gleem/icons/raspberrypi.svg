@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <!-- A generic single-board computer with a 40-pin header and two USB stacks, drawn for Gleem Imager. -->
+    <rect x="4" y="10" width="56" height="44" rx="4" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/>
+    <g fill="#6d28d9">
+        <circle cx="11" cy="14.5" r="1.1"/><circle cx="14.4" cy="14.5" r="1.1"/><circle cx="17.8" cy="14.5" r="1.1"/><circle cx="21.2" cy="14.5" r="1.1"/><circle cx="24.6" cy="14.5" r="1.1"/><circle cx="28" cy="14.5" r="1.1"/><circle cx="31.4" cy="14.5" r="1.1"/><circle cx="34.8" cy="14.5" r="1.1"/><circle cx="38.2" cy="14.5" r="1.1"/><circle cx="41.6" cy="14.5" r="1.1"/>
+        <circle cx="11" cy="18" r="1.1"/><circle cx="14.4" cy="18" r="1.1"/><circle cx="17.8" cy="18" r="1.1"/><circle cx="21.2" cy="18" r="1.1"/><circle cx="24.6" cy="18" r="1.1"/><circle cx="28" cy="18" r="1.1"/><circle cx="31.4" cy="18" r="1.1"/><circle cx="34.8" cy="18" r="1.1"/><circle cx="38.2" cy="18" r="1.1"/><circle cx="41.6" cy="18" r="1.1"/>
+    </g>
+    <rect x="48" y="23" width="9" height="11" rx="1" fill="#a78bfa"/>
+    <rect x="48" y="38" width="9" height="11" rx="1" fill="#a78bfa"/>
+    <path d="M48 28.5h9M48 43.5h9" stroke="#ede9fe" stroke-width="1"/>
+    <rect x="18" y="27" width="10" height="10" rx="1.5" fill="#6d28d9"/>
+    <rect x="31" y="29" width="8" height="6" rx="1" fill="#a78bfa"/>
+    <rect x="8" y="46" width="5" height="4" rx="1" fill="#a78bfa"/>
+    <rect x="16" y="46" width="7" height="4" rx="1" fill="#a78bfa"/>
+    <rect x="26" y="46" width="7" height="4" rx="1" fill="#a78bfa"/>
+    <circle cx="56" cy="15" r="1.6" fill="#6d28d9"/>
+    <circle cx="9" cy="27" r="1.6" fill="#6d28d9"/>
+</svg>
