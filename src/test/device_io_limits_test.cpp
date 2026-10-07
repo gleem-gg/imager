@@ -26,6 +26,8 @@
 
 #include <filesystem>
 #include <system_error>
+#else
+#include <unistd.h>  // getpid
 #endif
 
 using rpi_imager::FileOperations;
