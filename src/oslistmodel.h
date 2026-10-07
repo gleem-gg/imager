@@ -49,6 +49,7 @@ public:
         WebsiteRole,
         ArchitectureRole,
         PiConnectRole,
+        GleemHotspotRole,
     };
 
     struct OS {
@@ -73,6 +74,10 @@ public:
 
         bool random = false;
         bool enableRPiConnect = false;
+        // Gleem: "gleem_hotspot" from the OS list. Kept as a QVariant so the
+        // three states survive: true (write gleem-hotspot.conf), false (a
+        // Sidekick image whose box makes its own credentials), absent.
+        QVariant gleemHotspot;
     };
 
     explicit OSListModel(ImageWriter &);

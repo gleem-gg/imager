@@ -28,6 +28,8 @@
 #include "iconimageprovider.h"
 #include "iconmultifetcher.h"
 #include "nativefiledialog.h"
+#include "gleemhotspotcard.h"
+#include <QFontDatabase>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #endif
@@ -649,6 +651,10 @@ void ImageWriter::setSrc(const QUrl &url, quint64 downloadLen, quint64 extrLen, 
     _initFormat = (initFormat == "none") ? "" : initFormat;
     _osReleaseDate = releaseDate;
     _bmapUrl = bmapUrl;
+    // A new source is a new decision about the hotspot: only an OS list
+    // entry can turn it on, and the QML does that after this call.
+    setGleemHotspotMode(GleemHotspotMode::GleemHotspotNone);
+    clearGleemHotspotCredentials();
 
     qDebug() << "setSrc: initFormat parameter:" << initFormat << "-> _initFormat set to:" << _initFormat;
 
@@ -676,6 +682,100 @@ void ImageWriter::setSrc(const QUrl &url, quint64 downloadLen, quint64 extrLen, 
     {
         _extractSizeKnown = true;
     }
+}
+
+void ImageWriter::setGleemHotspotMode(GleemHotspotMode mode)
+{
+    if (_gleemHotspotMode == mode)
+        return;
+    _gleemHotspotMode = mode;
+    emit gleemHotspotModeChanged();
+}
+
+void ImageWriter::clearGleemHotspotCredentials()
+{
+    if (_gleemHotspotCredentials.isEmpty())
+        return;
+    _gleemHotspotCredentials.clear();
+    emit gleemHotspotCredentialsChanged();
+}
+
+QString ImageWriter::fixedFontFamily() const
+{
+#ifndef CLI_ONLY_BUILD
+    return QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
+#else
+    return QStringLiteral("monospace");
+#endif
+}
+
+QString ImageWriter::gleemHotspotQrDataUrl(const QString &ssid, const QString &password) const
+{
+#ifndef CLI_ONLY_BUILD
+    if (ssid.isEmpty() || password.isEmpty())
+        return {};
+    return gleemhotspot::qrCodeDataUrl(
+        gleemhotspot::wifiQrPayload(gleemhotspot::Credentials{ ssid, password }), 8);
+#else
+    Q_UNUSED(ssid);
+    Q_UNUSED(password);
+    return {};
+#endif
+}
+
+bool ImageWriter::saveGleemHotspotCard(const QString &format)
+{
+#ifndef CLI_ONLY_BUILD
+    if (!gleemhotspot::isValid(_gleemHotspotCredentials))
+        return false;
+
+    const bool pdf = format.compare(QLatin1String("pdf"), Qt::CaseInsensitive) == 0;
+    const QString defaultFilename = _gleemHotspotCredentials.ssid
+                                    + (pdf ? QStringLiteral(".pdf") : QStringLiteral(".png"));
+    const QString initialDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+    if (!NativeFileDialog::areNativeDialogsAvailable()) {
+        emit gleemHotspotSaveDialogNeeded(defaultFilename, initialDir,
+                                          pdf ? QStringLiteral("pdf") : QStringLiteral("png"));
+        return true;
+    }
+
+    const QString filePath = NativeFileDialog::getSaveFileName(
+        pdf ? tr("Save hotspot card as PDF") : tr("Save hotspot card as PNG"),
+        initialDir + "/" + defaultFilename,
+        pdf ? tr("PDF files (*.pdf)") : tr("PNG images (*.png)"),
+        _mainWindow);
+    if (filePath.isEmpty())
+        return false;
+
+    return saveGleemHotspotCardToFile(filePath, pdf ? QStringLiteral("pdf") : QStringLiteral("png"));
+#else
+    Q_UNUSED(format);
+    return false;
+#endif
+}
+
+bool ImageWriter::saveGleemHotspotCardToFile(const QString &filePath, const QString &format)
+{
+#ifndef CLI_ONLY_BUILD
+    if (filePath.isEmpty() || !gleemhotspot::isValid(_gleemHotspotCredentials))
+        return false;
+
+    const bool pdf = format.compare(QLatin1String("pdf"), Qt::CaseInsensitive) == 0;
+    const QString extension = pdf ? QStringLiteral(".pdf") : QStringLiteral(".png");
+    QString finalPath = filePath;
+    if (!finalPath.endsWith(extension, Qt::CaseInsensitive))
+        finalPath += extension;
+
+    const bool ok = pdf ? gleemhotspot::saveCardPdf(_gleemHotspotCredentials, finalPath)
+                        : gleemhotspot::saveCardPng(_gleemHotspotCredentials, finalPath);
+    qDebug() << "Gleem hotspot card" << (ok ? "saved to" : "could not be saved to") << finalPath;
+    return ok;
+#else
+    Q_UNUSED(filePath);
+    Q_UNUSED(format);
+    return false;
+#endif
 }
 
 /* Set device to write to */
@@ -1464,6 +1564,21 @@ void ImageWriter::_configureWriteThread()
     _thread->setUserAgent(CurlNetworkConfig::instance().userAgent());
     qDebug() << "configureWriteThread: passing to thread - initFormat:" << _initFormat << "cloudinit empty:" << _cloudinit.isEmpty() << "cloudinitNetwork empty:" << _cloudinitNetwork.isEmpty();
     _thread->setImageCustomisation(_config, _cmdline, _firstrun, _cloudinit, _cloudinitNetwork, _initFormat, _advancedOptions);
+
+    // Gleem IRL Sidekick: new hotspot credentials for every write, so a
+    // re-flashed box never keeps the old ones. Only an image with a FAT boot
+    // partition can take the file; a multi-file archive is not an image.
+    clearGleemHotspotCredentials();
+    if (_gleemHotspotMode == GleemHotspotMode::GleemHotspotWriteCredentials && !_multipleFilesInZip)
+    {
+        _gleemHotspotCredentials = gleemhotspot::generate();
+        _thread->setExtraBootFiles({
+            { QString::fromLatin1(gleemhotspot::kConfFileName),
+              gleemhotspot::confFileContents(_gleemHotspotCredentials) } });
+        // Never the values themselves.
+        qDebug() << "configureWriteThread: generated new Gleem hotspot credentials for this write";
+        emit gleemHotspotCredentialsChanged();
+    }
     
     // Pass debug options to the thread
     _thread->setDebugDirectIO(_debugDirectIO);
@@ -2042,6 +2157,7 @@ void ImageWriter::onCancelled()
 {
     setWriteState(WriteState::Cancelled);
     stopProgressPolling();
+    clearGleemHotspotCredentials();
 
     // Clean up thread
     QObject *senderObj = sender();
@@ -3134,6 +3250,7 @@ void ImageWriter::onError(QString msg)
     
     setWriteState(WriteState::Failed);
     stopProgressPolling();
+    clearGleemHotspotCredentials();
     
     // Cancel any running write thread to prevent orphaned operations.
     // Without this, a thread blocked on macOS auth could resume writing

@@ -207,7 +207,11 @@ TEST_CASE("Every OS role is either drawn or knowingly carried",
     // today: 'website' and 'tooltip' were the two, and the delegate now shows
     // both. A role added without a home belongs here with a reason, or in the
     // list above with somewhere to appear.
-    const QSet<QString> carriedButNotDrawn = {};
+    //
+    // 'gleem_hotspot' is read when an entry is chosen (OSSelectionStep hands
+    // it to ImageWriter) and decides what the done screen shows; the list
+    // itself has nothing to draw for it.
+    const QSet<QString> carriedButNotDrawn = { QStringLiteral("gleem_hotspot") };
 
     const QStringList names = roleNameList(*model);
     REQUIRE_FALSE(names.isEmpty());

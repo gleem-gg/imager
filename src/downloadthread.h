@@ -137,6 +137,15 @@ public:
     void setImageCustomisation(const QByteArray &config, const QByteArray &cmdline, const QByteArray &firstrun, const QByteArray &cloudinit, const QByteArray &cloudinitNetwork, const QByteArray &initFormat, const ImageOptions::AdvancedOptions opts);
 
     /*
+     * Extra files to put in the root of the FAT boot partition (partition 1)
+     * once the image is written, keyed by filename. Independent of the OS
+     * customisation above: it needs no init_format and switches none of it
+     * on. Used for the Gleem IRL Sidekick's gleem-hotspot.conf. The contents
+     * may be secret and are never logged; only the file names are.
+     */
+    void setExtraBootFiles(const QMap<QString, QByteArray> &files);
+
+    /*
      * Debug options (set before starting the thread)
      */
     void setDebugDirectIO(bool enabled);
@@ -284,6 +293,9 @@ protected:
     void _closeFiles();
     QByteArray _fileGetContentsTrimmed(const QString &filename);
     bool _customizeImage();
+    /* True when the OS customisation (config.txt, cmdline.txt, firstrun,
+       cloud-init) has something to write for this image. */
+    bool _hasOsCustomisation() const;
     bool _createSecureBootFiles(class DeviceWrapperFatPartition *fat);
     /* Record what customisation wrote, so _verifyCustomisation() can check the
        media actually kept it. */
@@ -320,6 +332,7 @@ protected:
         QByteArray digest;  // OSLIST_HASH_ALGORITHM, via AcceleratedCryptographicHash
     };
     QMap<QString, CustomisationExpectation> _customisationDigests;
+    QMap<QString, QByteArray> _extraBootFiles;
     char *_firstBlock;
     size_t _firstBlockSize;
     static QByteArray _proxy;

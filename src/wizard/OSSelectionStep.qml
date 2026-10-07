@@ -887,6 +887,13 @@ WizardStepBase {
                     typeof(model.release_date) != "undefined" ? model.release_date : "",
                     typeof(model.bmap_url) != "undefined" ? model.bmap_url : ""
                 )
+                // Gleem IRL Sidekick setup hotspot: true = the Imager writes
+                // the credentials, false = the box makes its own, absent =
+                // not a Sidekick image. setSrc() above reset it to none.
+                ImageWriterSingleton.setGleemHotspotMode(
+                    model.gleem_hotspot === true ? ImageWriterSingleton.GleemHotspotWriteCredentials
+                    : model.gleem_hotspot === false ? ImageWriterSingleton.GleemHotspotDeviceGenerated
+                    : ImageWriterSingleton.GleemHotspotNone)
                 ImageWriterSingleton.setSWCapabilitiesList(model.capabilities)
 
                 root.wizardContainer.selectedOsName = model.name

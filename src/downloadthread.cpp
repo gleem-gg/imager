@@ -1981,8 +1981,12 @@ void DownloadThread::_writeComplete()
 
     qDebug() << "Checking customization: config=" << !_config.isEmpty() << "cmdline=" << !_cmdline.isEmpty() 
              << "firstrun=" << !_firstrun.isEmpty() << "cloudinit=" << !_cloudinit.isEmpty() 
-             << "initFormat=" << _initFormat << "isEmpty=" << _initFormat.isEmpty();
-    if ((!_config.isEmpty() || !_cmdline.isEmpty() || !_firstrun.isEmpty() || !_cloudinit.isEmpty()) && !_initFormat.isEmpty())
+             << "initFormat=" << _initFormat << "isEmpty=" << _initFormat.isEmpty()
+             << "extraBootFiles=" << _extraBootFiles.keys();
+    /* Both kinds go through _customizeImage(): it owns the first-block (MBR)
+       handover to DeviceWrapper, which then writes the MBR last in sync().
+       When it does not run, the block below writes the MBR itself. */
+    if (_hasOsCustomisation() || !_extraBootFiles.isEmpty())
     {
         if (!_customizeImage())
         {
@@ -2659,6 +2663,19 @@ void DownloadThread::setImageCustomisation(const QByteArray &config, const QByte
     qDebug() << "DownloadThread::setImageCustomisation - initFormat:" << initFormat << "cloudinit empty:" << cloudinit.isEmpty() << "cloudinitNetwork empty:" << cloudInitNetwork.isEmpty();
 }
 
+void DownloadThread::setExtraBootFiles(const QMap<QString, QByteArray> &files)
+{
+    _extraBootFiles = files;
+    // File names only: the contents can be credentials.
+    qDebug() << "DownloadThread::setExtraBootFiles -" << files.keys();
+}
+
+bool DownloadThread::_hasOsCustomisation() const
+{
+    return (!_config.isEmpty() || !_cmdline.isEmpty() || !_firstrun.isEmpty() || !_cloudinit.isEmpty())
+           && !_initFormat.isEmpty();
+}
+
 void DownloadThread::setDebugDirectIO(bool enabled)
 {
     _debugDirectIO = enabled;
@@ -2756,6 +2773,12 @@ bool DownloadThread::_customizeImage()
     QElapsedTimer customTimer;
     customTimer.start();
     
+    /* The upstream customisation runs only when an init_format says how the
+       OS applies it; the extra boot files run on their own. Anything below
+       that belongs to the former is gated on this, so writing an extra file
+       never switches on config.txt/cmdline.txt edits or secure boot. */
+    const bool osCustomisation = _hasOsCustomisation();
+
     // Build metadata for performance tracking (what was configured, not values)
     QStringList configuredItems;
     if (!_config.isEmpty()) configuredItems << "config: set";
@@ -2763,7 +2786,10 @@ bool DownloadThread::_customizeImage()
     if (!_firstrun.isEmpty()) configuredItems << "firstrun: set";
     if (!_cloudinit.isEmpty()) configuredItems << "cloudinit: set";
     if (!_cloudinitNetwork.isEmpty()) configuredItems << "network: set";
-    if (_advancedOptions.testFlag(ImageOptions::EnableSecureBoot)) configuredItems << "secureboot: enabled";
+    if (osCustomisation && _advancedOptions.testFlag(ImageOptions::EnableSecureBoot)) configuredItems << "secureboot: enabled";
+    // Names only, never contents (gleem-hotspot.conf holds a password).
+    for (auto it = _extraBootFiles.constBegin(); it != _extraBootFiles.constEnd(); ++it)
+        configuredItems << QStringLiteral("%1: written").arg(it.key());
     QString metadata = configuredItems.join("; ");
 
     // Use DeviceWrapper with existing FileOperations for image customization
@@ -2789,8 +2815,16 @@ bool DownloadThread::_customizeImage()
         fatTimer.start();
         DeviceWrapperFatPartition *fat = dw.fatPartition(1);
         emit eventFatPartitionSetup(static_cast<quint32>(fatTimer.elapsed()), fat != nullptr);
+        if (!fat)
+            throw std::runtime_error("boot partition not found");
 
-        if (!_config.isEmpty())
+        for (auto it = _extraBootFiles.constBegin(); it != _extraBootFiles.constEnd(); ++it)
+        {
+            fat->writeFile(it.key(), it.value());
+            _recordCustomisationWrite(it.key(), it.value());
+        }
+
+        if (osCustomisation && !_config.isEmpty())
         {
             auto configItems = _config.split('\n');
             configItems.removeAll("");
@@ -2805,7 +2839,7 @@ bool DownloadThread::_customizeImage()
 
         // init_format decision is owned by ImageWriter; no auto-detection here
 
-        if (!_firstrun.isEmpty())
+        if (osCustomisation && !_firstrun.isEmpty())
         {
             // CustomisationGenerator now creates complete scripts with header and footer
             // No need to add them here anymore
@@ -2825,7 +2859,7 @@ bool DownloadThread::_customizeImage()
         auto initCloud = _initFormat == "cloudinit" || _initFormat == "cloudinit-rpi";
         auto hasCloudContent = !_cloudinit.isEmpty() || !_cloudinitNetwork.isEmpty();
         qDebug() << "_customizeImage: _initFormat=" << _initFormat << "initCloud=" << initCloud << "_cloudinit.isEmpty()=" << _cloudinit.isEmpty();
-        if (initCloud && hasCloudContent) {
+        if (osCustomisation && initCloud && hasCloudContent) {
             // Write meta-data file for NoCloud datasource
             // cloud-init requires meta-data to be present for proper datasource detection
             // instance-id should be unique per imaging to ensure cloud-init processes user-data
@@ -2856,7 +2890,7 @@ bool DownloadThread::_customizeImage()
             }
         }
 
-        if (!_cmdline.isEmpty())
+        if (osCustomisation && !_cmdline.isEmpty())
         {
             QByteArray cmdline = fat->readFile("cmdline.txt").trimmed();
 
@@ -2873,7 +2907,7 @@ bool DownloadThread::_customizeImage()
         emit eventPartitionTableWrite(static_cast<quint32>(syncTimer.elapsed()), true);
         
         // Generate secure boot files if enabled
-        if (_advancedOptions.testFlag(ImageOptions::EnableSecureBoot))
+        if (osCustomisation && _advancedOptions.testFlag(ImageOptions::EnableSecureBoot))
         {
             emit preparationStatusUpdate(tr("Creating signed boot image..."));
             if (!_createSecureBootFiles(fat))
@@ -2941,7 +2975,8 @@ bool DownloadThread::_createSecureBootFiles(DeviceWrapperFatPartition *fat)
         "user-data",         // cloud-init customization
         "meta-data",         // cloud-init metadata
         "network-config",    // cloud-init network customization
-        "rpi-preseed.toml"   // rpi-preseed customization
+        "rpi-preseed.toml",  // rpi-preseed customization
+        "gleem-hotspot.conf" // Gleem IRL Sidekick setup hotspot credentials
     };
     
     QMap<QString, QByteArray> bootFiles;

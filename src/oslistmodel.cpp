@@ -103,6 +103,11 @@ bool OSListModel::reload()
         os.website = obj["website"].toString();
         os.architecture = obj["architecture"].toString();
         os.enableRPiConnect = obj.value("enable_rpi_connect").toBool(false);
+        {
+            const QJsonValue hotspot = obj.value(QLatin1String("gleem_hotspot"));
+            if (hotspot.isBool())
+                os.gleemHotspot = hotspot.toBool();
+        }
 
         next.append(os);
     }
@@ -156,7 +161,8 @@ bool sameContents(const OSListModel::OS &a, const OSListModel::OS &b)
         && a.imageDownloadSize == b.imageDownloadSize
         && a.extractSize == b.extractSize
         && a.random == b.random
-        && a.enableRPiConnect == b.enableRPiConnect;
+        && a.enableRPiConnect == b.enableRPiConnect
+        && a.gleemHotspot == b.gleemHotspot;
 }
 
 } // namespace
@@ -246,7 +252,8 @@ QHash<int, QByteArray> OSListModel::roleNames() const
         { TooltipRole, "tooltip" },
         { WebsiteRole, "website" },
         { ArchitectureRole, "architecture" },
-        { PiConnectRole, "enable_rpi_connect" }
+        { PiConnectRole, "enable_rpi_connect" },
+        { GleemHotspotRole, "gleem_hotspot" }
     };
 }
 
@@ -294,6 +301,8 @@ QVariant OSListModel::data(const QModelIndex &index, int role) const {
             return os.architecture;
         case PiConnectRole:
             return os.enableRPiConnect;
+        case GleemHotspotRole:
+            return os.gleemHotspot;
     }
 
     return {};

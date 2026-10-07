@@ -930,6 +930,108 @@ TEST_CASE("DownloadThread writes config.txt into the boot partition", "[download
     CHECK(config.contains("dtoverlay=disable-bt"));
 }
 
+// Gleem: extra files for the boot partition (gleem-hotspot.conf) go through
+// the customisation pass without an init_format and without switching any of
+// the OS customisation on.
+namespace {
+
+QByteArray firstSector(const QString &path)
+{
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly))
+        return {};
+    return f.read(512);
+}
+
+bool bootFileExists(const QString &devicePath, const QString &name)
+{
+    auto ops = rpi_imager::FileOperations::Create();
+    if (ops->OpenDevice(devicePath.toStdString()) != rpi_imager::FileError::kSuccess)
+        return false;
+    DeviceWrapper dw(ops.get());
+    DeviceWrapperFatPartition *fat = dw.fatPartition(1);
+    return fat && fat->fileExists(name);
+}
+
+} // namespace
+
+TEST_CASE("DownloadThread writes extra boot files without OS customisation",
+          "[download][customise][gleem]")
+{
+    if (!rpi_test::haveFatFormatter())
+        SKIP(rpi_test::noFatFormatterReason());
+
+    ScratchDir scratch;
+    const QString source = scratch.filePath(QStringLiteral("extra-src.img"));
+    REQUIRE(buildPartitionedImage(source, 48));
+
+    // 0xFF, not zeros: a partition table that was held back and never written
+    // would otherwise still read as "something" only by luck.
+    const QString dest = scratch.filePath(QStringLiteral("extra-dest.img"));
+    REQUIRE(writeFile(dest, QByteArray(56 * 1024 * 1024, '\xFF')));
+
+    const QByteArray conf = "SSID=IRL-Sidekick-AB12\nPASSWORD=abcdefghijkmnpqrstuv\n";
+
+    DownloadThread dt(QUrl::fromLocalFile(source).toEncoded(), dest.toUtf8(), QByteArray());
+    // Verification off as in the cases above: it hashes the image before
+    // the boot files are written, so it has nothing to say about them, and
+    // the read-back of the boot files themselves runs either way.
+    dt.setVerifyEnabled(false);
+    // No init_format and nothing to customise: the upstream pass alone would
+    // not run at all.
+    dt.setImageCustomisation(QByteArray(), QByteArray(), QByteArray(), QByteArray(),
+                             QByteArray(), QByteArray(), ImageOptions::AdvancedOptions());
+    dt.setExtraBootFiles({ { QStringLiteral("gleem-hotspot.conf"), conf } });
+
+    const Outcome outcome = runToCompletion(dt, kWriteTimeoutMs);
+    INFO("error: " << outcome.errorMessage.toStdString());
+    REQUIRE(outcome.finished);
+    REQUIRE(outcome.succeeded);
+
+    // The MBR went out, intact, after the filesystem was edited.
+    const QByteArray mbr = firstSector(dest);
+    REQUIRE(mbr.size() == 512);
+    CHECK(mbr == firstSector(source));
+
+    CHECK(readFromBootPartition(dest, QStringLiteral("gleem-hotspot.conf")) == conf);
+
+    // And nothing of the OS customisation came with it.
+    CHECK_FALSE(bootFileExists(dest, QStringLiteral("cmdline.txt")));
+    CHECK_FALSE(bootFileExists(dest, QStringLiteral("config.txt")));
+    CHECK_FALSE(bootFileExists(dest, QStringLiteral("firstrun.sh")));
+}
+
+TEST_CASE("DownloadThread writes extra boot files alongside OS customisation",
+          "[download][customise][gleem]")
+{
+    if (!rpi_test::haveFatFormatter())
+        SKIP(rpi_test::noFatFormatterReason());
+
+    ScratchDir scratch;
+    const QString source = scratch.filePath(QStringLiteral("extra2-src.img"));
+    REQUIRE(buildPartitionedImage(source, 48));
+
+    const QString dest = scratch.filePath(QStringLiteral("extra2-dest.img"));
+    REQUIRE(writeFile(dest, QByteArray(56 * 1024 * 1024, '\0')));
+
+    const QByteArray conf = "SSID=IRL-Sidekick-ZZ99\nPASSWORD=23456789abcdefghijkm\n";
+
+    DownloadThread dt(QUrl::fromLocalFile(source).toEncoded(), dest.toUtf8(), QByteArray());
+    dt.setVerifyEnabled(false);
+    dt.setImageCustomisation("dtoverlay=disable-bt", QByteArray(), QByteArray(), QByteArray(),
+                             QByteArray(), "systemd", ImageOptions::AdvancedOptions());
+    dt.setExtraBootFiles({ { QStringLiteral("gleem-hotspot.conf"), conf } });
+
+    const Outcome outcome = runToCompletion(dt, kWriteTimeoutMs);
+    INFO("error: " << outcome.errorMessage.toStdString());
+    REQUIRE(outcome.finished);
+    REQUIRE(outcome.succeeded);
+
+    CHECK(firstSector(dest) == firstSector(source));
+    CHECK(readFromBootPartition(dest, QStringLiteral("gleem-hotspot.conf")) == conf);
+    CHECK(readFromBootPartition(dest, QStringLiteral("config.txt")).contains("dtoverlay=disable-bt"));
+}
+
 TEST_CASE("DownloadThread writes cmdline and firstrun into the boot partition",
           "[download][customise]")
 {

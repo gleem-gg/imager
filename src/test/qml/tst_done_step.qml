@@ -353,6 +353,69 @@ TestCase {
                "Down stops at the end of the list, not past it")
     }
 
+    // -- Gleem IRL Sidekick setup hotspot -----------------------------------
+
+    function showCredentials(s) {
+        s.hotspotSsid = "IRL-Sidekick-AB12"
+        s.hotspotPassword = "abcdefghijkmnpqrstuv"
+    }
+
+    function test_no_hotspot_section_for_an_ordinary_write() {
+        const s = make()
+        const section = findChild(s, "hotspotSection")
+        verify(section !== null, "the section exists")
+        verify(!section.visible, "but stays hidden without credentials")
+        verify(!findChild(s, "hotspotDeviceNote").visible,
+               "and the box-makes-its-own note is for Sidekick images only")
+    }
+
+    function test_the_hotspot_credentials_are_shown_with_a_qr_code() {
+        const s = make()
+        showCredentials(s)
+
+        verify(findChild(s, "hotspotSection").visible, "the section appears")
+        verify(findChild(s, "hotspotHeading").visible, "with its heading")
+        compare(findChild(s, "hotspotSsidValue").text, "IRL-Sidekick-AB12")
+        compare(findChild(s, "hotspotPasswordValue").text, "abcdefghijkmnpqrstuv")
+        verify(findChild(s, "hotspotSsidValue").selectByMouse, "the name can be selected and copied")
+        verify(findChild(s, "hotspotPasswordValue").readOnly, "but not edited")
+
+        const qr = findChild(s, "hotspotQrCode")
+        verify(String(qr.source).indexOf("data:image/png;base64,") === 0,
+               "the QR code is drawn from the values on screen")
+        tryCompare(qr, "status", Image.Ready)
+        verify(qr.implicitWidth > 0, "and it decodes")
+
+        verify(String(findChild(s, "hotspotHint").text).indexOf("http://10.42.0.1/") >= 0,
+               "the hint says where the box's setup page is")
+        verify(findChild(s, "hotspotSavePngButton").visible, "Save as PNG is offered")
+        verify(findChild(s, "hotspotSavePdfButton").visible, "Save as PDF is offered")
+        verify(!findChild(s, "hotspotDeviceNote").visible,
+               "and the box-makes-its-own note is not shown next to real credentials")
+
+        const shot = TestEnv.value("GLEEM_DONE_SCREENSHOT")
+        if (shot !== "") {
+            fakeContainer.selectedDeviceName = "Raspberry Pi 4"
+            fakeContainer.selectedOsName = "Gleem IRL Sidekick"
+            fakeContainer.selectedStorageName = "Generic Mass-Storage 32 GB"
+            wait(50)
+            // save() throws if it cannot write the file.
+            grabImage(s).save(shot)
+        }
+    }
+
+    function test_a_sidekick_image_without_a_boot_partition_says_the_box_makes_its_own() {
+        ImageWriterSingleton.setGleemHotspotMode(ImageWriterSingleton.GleemHotspotDeviceGenerated)
+        try {
+            const s = make()
+            verify(!findChild(s, "hotspotSection").visible, "no credentials, no QR code")
+            verify(findChild(s, "hotspotDeviceNote").visible,
+                   "but the user is told where the name and password come from")
+        } finally {
+            ImageWriterSingleton.setGleemHotspotMode(ImageWriterSingleton.GleemHotspotNone)
+        }
+    }
+
     function findFlickable(root) {
         if (!root)
             return null

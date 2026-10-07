@@ -512,9 +512,40 @@ ApplicationWindow {
         }
     }
 
+    // QML fallback save dialog for the IRL Sidekick hotspot card (PNG/PDF)
+    ImSaveFileDialog {
+        id: hotspotCardSaveDialog
+        objectName: "hotspotCardSaveDialog"
+        parent: overlayRoot
+        anchors.centerIn: parent
+        property string format: "png"
+        dialogTitle: format === "pdf" ? qsTr("Save hotspot card as PDF") : qsTr("Save hotspot card as PNG")
+        nameFilters: format === "pdf" ? [qsTr("PDF files (*.pdf)")] : [qsTr("PNG images (*.png)")]
+
+        onAccepted: {
+            var filePath = String(selectedFile)
+            if (filePath.indexOf("file://") === 0) {
+                filePath = filePath.substring(7)
+                if (/^\/[A-Za-z]:/.test(filePath))
+                    filePath = filePath.substring(1)
+            }
+            if (filePath.length > 0)
+                ImageWriterSingleton.saveGleemHotspotCardToFile(filePath, format)
+        }
+    }
+
     // Handle signal from C++ when native save dialog isn't available
     Connections {
         target: ImageWriterSingleton
+        function onGleemHotspotSaveDialogNeeded(suggestedFilename, initialDir, format) {
+            hotspotCardSaveDialog.format = format
+            hotspotCardSaveDialog.suggestedFilename = suggestedFilename
+            var folderUrl = (Qt.platform.os === "windows") ? ("file:///" + initialDir) : ("file://" + initialDir)
+            hotspotCardSaveDialog.currentFolder = folderUrl
+            hotspotCardSaveDialog.folder = folderUrl
+            hotspotCardSaveDialog.open()
+        }
+
         function onPerformanceSaveDialogNeeded(suggestedFilename, initialDir) {
             console.log("Native save dialog not available, using QML fallback")
             performanceSaveDialog.suggestedFilename = suggestedFilename
