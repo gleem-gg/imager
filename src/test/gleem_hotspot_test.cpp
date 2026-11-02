@@ -66,7 +66,7 @@ TEST_CASE("Hotspot credentials follow the box's own scheme", "[gleem][hotspot]")
     static const QRegularExpression ssidPattern(
         QStringLiteral("^IRL-Sidekick-[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{4}$"));
     static const QRegularExpression passwordPattern(
-        QStringLiteral("^[abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{20}$"));
+        QStringLiteral("^[abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$"));
 
     QSet<QString> ssids, passwords;
     for (int i = 0; i < 200; ++i) {
@@ -78,7 +78,7 @@ TEST_CASE("Hotspot credentials follow the box's own scheme", "[gleem][hotspot]")
         ssids.insert(c.ssid);
         passwords.insert(c.password);
     }
-    // 32^20 passwords: any repeat in 200 draws means the generator is broken.
+    // 56^12 passwords: any repeat in 200 draws means the generator is broken.
     CHECK(passwords.size() == 200);
     // 32^4 = 1,048,576 names; 200 draws repeat with a probability of ~2%,
     // so only ask for "clearly not constant".

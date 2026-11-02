@@ -30,14 +30,14 @@ namespace gleemhotspot {
 inline constexpr const char *kConfFileName = "gleem-hotspot.conf";
 
 // The scheme the box itself uses when it has to make its own credentials:
-// "IRL-Sidekick-" plus four characters, and a 20-character password, both
+// "IRL-Sidekick-" plus four characters, and a 12-character password, both
 // from alphabets without look-alike characters (no 0/O, 1/I/l).
 inline constexpr const char *kSsidPrefix = "IRL-Sidekick-";
 inline constexpr const char *kSsidAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 inline constexpr const char *kPasswordAlphabet =
     "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 inline constexpr int kSsidSuffixLength = 4;
-inline constexpr int kPasswordLength = 20;
+inline constexpr int kPasswordLength = 12;
 
 struct Credentials
 {
