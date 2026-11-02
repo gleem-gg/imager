@@ -29,6 +29,14 @@ What differs from upstream:
 - The Windows installer has its own AppId and never touches a Raspberry Pi
   Imager installation.
 - The version comes only from `gleem-vX.Y.Z` tags.
+- IRL Sidekick setup hotspot: an OS list entry with `"gleem_hotspot": true`
+  (an image whose first partition is FAT, like the Raspberry Pi image) gets a
+  new hotspot name and password on every write. They are written to
+  `gleem-hotspot.conf` in the boot partition and shown on the done screen as
+  text and as a Wi-Fi QR code, with "Save as PNG/PDF". `"gleem_hotspot": false`
+  marks a Sidekick image without a FAT boot partition (Orange Pi 5 Plus):
+  nothing is written and the done screen says the box makes its own. The CLI
+  takes `--gleem-hotspot` and prints the credentials on success.
 
 The upstream README is in [README.upstream.md](README.upstream.md); building
 works the same way (see [BUILDING.md](BUILDING.md)), and the binary is called

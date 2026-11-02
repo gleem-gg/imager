@@ -9,6 +9,7 @@
 #   libarchive v3.8.7       (LIBARCHIVE_VERSION)
 #   curl       curl-8_20_0  (CURL_VERSION 8.20.0)
 #   libusb     v1.0.30      (LIBUSB_VERSION)
+#   qrcodegen  v1.8.0       (QRCODEGEN_VERSION)
 #
 # Usage:
 #   debian/fetch-vendor-deps.sh
@@ -63,5 +64,6 @@ check_submodule src/dependencies/vendor/nghttp2 v1.69.0 lib/CMakeLists.txt
 check_submodule src/dependencies/vendor/libarchive v3.8.7 CMakeLists.txt
 check_submodule src/dependencies/vendor/curl curl-8_20_0 CMakeLists.txt
 check_submodule src/dependencies/vendor/libusb v1.0.30 libusb/libusb.h
+check_submodule src/dependencies/vendor/qrcodegen v1.8.0 cpp/qrcodegen.cpp
 
 echo "fetch-vendor-deps: ready"

@@ -34,6 +34,7 @@
 #include "imageadvancedoptions.h"
 #include "performancestats.h"
 #include "rpiboot/rpiboot_types.h"
+#include "gleemhotspot.h"
 
 class QQmlApplicationEngine;
 class DownloadThread;
@@ -80,6 +81,22 @@ public:
     };
     Q_ENUM(EjectState)
 
+    // What the selected image does about the Gleem IRL Sidekick's setup
+    // hotspot, from the OS list's "gleem_hotspot" key:
+    //   true  -> GleemHotspotWriteCredentials: the image has a FAT boot
+    //            partition; the Imager generates a name and password per
+    //            write, puts them in gleem-hotspot.conf and shows them.
+    //   false -> GleemHotspotDeviceGenerated: a Sidekick image without a FAT
+    //            boot partition; nothing is written and the box makes up its
+    //            own credentials, shown in its local interface.
+    //   absent (and any image not from the list) -> GleemHotspotNone.
+    enum class GleemHotspotMode {
+        GleemHotspotNone,
+        GleemHotspotWriteCredentials,
+        GleemHotspotDeviceGenerated
+    };
+    Q_ENUM(GleemHotspotMode)
+
     // NB: the parent argument is deliberately mandatory (no `= nullptr`).
     // ImageWriter is a QML_SINGLETON whose instance is supplied by main() via
     // setQmlInstance()/create(). Qt's qmlRegisterTypesAndRevisions only honours a
@@ -105,6 +122,11 @@ public:
     Q_PROPERTY(EjectState ejectState READ ejectState NOTIFY ejectStateChanged)
     Q_PROPERTY(bool isOsListUnavailable READ isOsListUnavailable NOTIFY osListUnavailableChanged)
     Q_PROPERTY(bool screenReaderActive READ isScreenReaderActive NOTIFY screenReaderActiveChanged)
+    Q_PROPERTY(GleemHotspotMode gleemHotspotMode READ gleemHotspotMode NOTIFY gleemHotspotModeChanged)
+    // The credentials written by the last write, held in memory only until
+    // the done screen is left or another write starts. Empty otherwise.
+    Q_PROPERTY(QString gleemHotspotSsid READ gleemHotspotSsid NOTIFY gleemHotspotCredentialsChanged)
+    Q_PROPERTY(QString gleemHotspotPassword READ gleemHotspotPassword NOTIFY gleemHotspotCredentialsChanged)
 
     /* Returns true if the extract size is reliably known (false for gz files which can't store sizes >4GB) */
     Q_INVOKABLE bool isExtractSizeKnown() const { return _extractSizeKnown; }
@@ -114,6 +136,24 @@ public:
 
     /* Set device to write to */
     Q_INVOKABLE void setDst(const QString &device, quint64 deviceSize = 0);
+
+    /* Gleem IRL Sidekick setup hotspot (see GleemHotspotMode). setSrc()
+       resets the mode to GleemHotspotNone, so call this after it. */
+    Q_INVOKABLE void setGleemHotspotMode(GleemHotspotMode mode);
+    GleemHotspotMode gleemHotspotMode() const { return _gleemHotspotMode; }
+    QString gleemHotspotSsid() const { return _gleemHotspotCredentials.ssid; }
+    QString gleemHotspotPassword() const { return _gleemHotspotCredentials.password; }
+    /* Forget the credentials of the last write. */
+    Q_INVOKABLE void clearGleemHotspotCredentials();
+    /* The platform's fixed-pitch font family, for the credentials. */
+    Q_INVOKABLE QString fixedFontFamily() const;
+    /* A Wi-Fi QR code (WIFI:S:...;T:WPA;P:...;;) as a PNG data: URL. */
+    Q_INVOKABLE QString gleemHotspotQrDataUrl(const QString &ssid, const QString &password) const;
+    /* Save the last write's credentials as a printable card. format is "png"
+       or "pdf". Opens the native save dialog; without one it emits
+       gleemHotspotSaveDialogNeeded for the QML fallback. */
+    Q_INVOKABLE bool saveGleemHotspotCard(const QString &format);
+    Q_INVOKABLE bool saveGleemHotspotCardToFile(const QString &filePath, const QString &format);
 
     /* Set verification enabled */
     Q_INVOKABLE void setVerifyEnabled(bool verify);
@@ -614,6 +654,9 @@ signals:
     void locationPermissionGranted();
     void performanceSaveDialogNeeded(const QString &suggestedFilename, const QString &initialDir);
     void screenReaderActiveChanged();
+    void gleemHotspotModeChanged();
+    void gleemHotspotCredentialsChanged();
+    void gleemHotspotSaveDialogNeeded(const QString &suggestedFilename, const QString &initialDir, const QString &format);
 
 protected slots:
     void startProgressPolling();
@@ -708,6 +751,8 @@ protected:
     QString _dst, _parentCategory, _osName, _osReleaseDate, _currentLang, _currentLangcode, _currentKeyboard, _bmapUrl;
     QByteArray _expectedHash, _cmdline, _config, _firstrun, _cloudinit, _cloudinitNetwork, _initFormat;
     ImageOptions::AdvancedOptions _advancedOptions;
+    GleemHotspotMode _gleemHotspotMode = GleemHotspotMode::GleemHotspotNone;
+    gleemhotspot::Credentials _gleemHotspotCredentials;
     quint64 _downloadLen, _extrLen, _devLen, _dlnow, _verifynow;
     DriveListModel _drivelist;
     bool _selectedDeviceValid;

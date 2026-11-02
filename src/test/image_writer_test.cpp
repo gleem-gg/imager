@@ -12732,6 +12732,7 @@ OSListModel::OS fullyPopulatedEntry()
     os.extractSize = 7654321;
     os.random = true;
     os.enableRPiConnect = true;
+    os.gleemHotspot = true;
     return os;
 }
 
@@ -12784,6 +12785,7 @@ TEST_CASE("Every field the chooser shows comes back under the name QML asks for"
         {OSListModel::WebsiteRole,           "website",             os.website},
         {OSListModel::ArchitectureRole,      "architecture",        os.architecture},
         {OSListModel::PiConnectRole,         "enable_rpi_connect",  QVariant(os.enableRPiConnect)},
+        {OSListModel::GleemHotspotRole,      "gleem_hotspot",       os.gleemHotspot},
     };
 
     for (const Expected &e : expected) {
@@ -13394,6 +13396,7 @@ TEST_CASE("Every role the chooser binds to has the name QML uses",
         { OSListModel::WebsiteRole, "website" },
         { OSListModel::ArchitectureRole, "architecture" },
         { OSListModel::PiConnectRole, "enable_rpi_connect" },
+        { OSListModel::GleemHotspotRole, "gleem_hotspot" },
     };
 
     for (const auto &pair : expected) {

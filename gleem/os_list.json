@@ -39,7 +39,8 @@
       "extract_sha256": "62d84b78f229bc0d53eabceeb92d15f279c28f7d4d82548a8a61c4a7874e5124",
       "image_download_size": 510768640,
       "release_date": "2026-09-27",
-      "devices": ["opi5plus"]
+      "devices": ["opi5plus"],
+      "gleem_hotspot": false
     },
     {
       "name": "Gleem IRL Sidekick",
@@ -50,7 +51,8 @@
       "extract_sha256": "705cc4977525dde8d36b26ff95c2f19a4bc831f48318845c75a4be5a483d7197",
       "image_download_size": 1011239912,
       "release_date": "2026-09-29",
-      "devices": ["pi4-64bit", "pi5-64bit"]
+      "devices": ["pi4-64bit", "pi5-64bit"],
+      "gleem_hotspot": true
     }
   ]
 }

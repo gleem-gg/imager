@@ -165,6 +165,7 @@ int Cli::run()
         {"quiet", "Only write to console on error"},
         {"log-file", "Log output to file (for debugging)", "path", ""},
         {"secure-boot-key", "Path to RSA private key (PEM format) for secure boot signing", "key-file", ""},
+        {"gleem-hotspot", "Gleem IRL Sidekick: write new setup hotspot credentials (gleem-hotspot.conf) to the FAT boot partition and print them on success"},
     });
 
     parser.addPositionalArgument("src", "Image file/URL");
@@ -367,6 +368,10 @@ int Cli::run()
         _imageWriter->setImageCustomisation("", "", "", "", "", advancedOptions, initFormat);
     }
 
+    // After setSrc(), which resets it.
+    if (parser.isSet("gleem-hotspot"))
+        _imageWriter->setGleemHotspotMode(ImageWriter::GleemHotspotMode::GleemHotspotWriteCredentials);
+
     _imageWriter->setDst(args[1]);
     _imageWriter->setVerifyEnabled(!parser.isSet("disable-verify"));
     _imageWriter->setSetting("eject", !parser.isSet("disable-eject"));
@@ -382,6 +387,14 @@ void Cli::onSuccess()
     {
         _clearLine();
         std::cerr << "Write successful." << std::endl;
+    }
+    // The credentials are the result of --gleem-hotspot, so they are printed
+    // even with --quiet -- to stdout, for the operator, never to the log.
+    if (!_imageWriter->gleemHotspotSsid().isEmpty())
+    {
+        std::cout << "Hotspot name: " << _imageWriter->gleemHotspotSsid().toStdString() << std::endl;
+        std::cout << "Hotspot password: " << _imageWriter->gleemHotspotPassword().toStdString() << std::endl;
+        _imageWriter->clearGleemHotspotCredentials();
     }
     _app->exit(0);
 }

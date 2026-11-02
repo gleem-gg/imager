@@ -24,6 +24,17 @@ WizardStepBase {
     readonly property bool ejectApplicable: !ImageWriterSingleton.isFastbootDevice()
     // Use snapshot of customization flags captured when write completed
     // This preserves the state even after token/flags are cleared for security
+    // Gleem IRL Sidekick setup hotspot. The credentials live in ImageWriter
+    // for this write only; they are cleared when this screen goes away or the
+    // next write starts, and never logged.
+    readonly property int hotspotMode: ImageWriterSingleton.gleemHotspotMode
+    property string hotspotSsid: ImageWriterSingleton.gleemHotspotSsid
+    property string hotspotPassword: ImageWriterSingleton.gleemHotspotPassword
+    readonly property bool showHotspotCredentials: hotspotSsid !== "" && hotspotPassword !== ""
+    readonly property string monospaceFamily: ImageWriterSingleton.fixedFontFamily()
+    readonly property bool showHotspotDeviceNote: !showHotspotCredentials &&
+        hotspotMode === ImageWriterSingleton.GleemHotspotDeviceGenerated
+
     readonly property bool anyCustomizationsApplied: (
         wizardContainer.completionSnapshot.customizationSupported && (
             wizardContainer.completionSnapshot.hostnameConfigured ||
@@ -238,6 +249,169 @@ WizardStepBase {
                 }
                 ScrollBar.vertical: ScrollBar { policy: contentItem.implicitHeight > height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff; width: Style.scrollBarWidth }
             }
+            // IRL Sidekick setup hotspot: name, password and a Wi-Fi QR code
+            FocusableHeading {
+                id: hotspotHeading
+                objectName: "hotspotHeading"
+                text: qsTr("IRL Sidekick setup hotspot:")
+                font.pointSize: Style.fontSizeFormLabel
+                font.family: Style.fontFamilyBold
+                font.bold: true
+                color: Style.formLabelColor
+                Layout.fillWidth: true
+                Layout.topMargin: Style.spacingSmall
+                visible: root.showHotspotCredentials
+            }
+
+            RowLayout {
+                id: hotspotSection
+                objectName: "hotspotSection"
+                Layout.fillWidth: true
+                spacing: Style.spacingLarge
+                visible: root.showHotspotCredentials
+
+                Image {
+                    id: hotspotQrCode
+                    objectName: "hotspotQrCode"
+                    // A data: URL made from the values on screen; not cached,
+                    // so it goes away with them.
+                    source: root.showHotspotCredentials
+                            ? ImageWriterSingleton.gleemHotspotQrDataUrl(root.hotspotSsid, root.hotspotPassword)
+                            : ""
+                    cache: false
+                    smooth: false
+                    mipmap: false
+                    fillMode: Image.PreserveAspectFit
+                    Layout.preferredWidth: 160
+                    Layout.preferredHeight: 160
+                    Layout.alignment: Qt.AlignTop
+                    Accessible.role: Accessible.Graphic
+                    Accessible.name: qsTr("QR code to join the IRL Sidekick setup hotspot")
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignTop
+                    spacing: Style.spacingSmall
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 2
+                        columnSpacing: Style.formColumnSpacing
+                        rowSpacing: Style.spacingSmall
+
+                        FocusableText {
+                            id: hotspotSsidLabel
+                            text: qsTr("Network name:")
+                            font.pointSize: Style.fontSizeDescription
+                            font.family: Style.fontFamily
+                            color: Style.formLabelColor
+                            Accessible.name: text + " " + root.hotspotSsid
+                        }
+                        TextEdit {
+                            id: hotspotSsidValue
+                            objectName: "hotspotSsidValue"
+                            text: root.hotspotSsid
+                            readOnly: true
+                            selectByMouse: true
+                            selectByKeyboard: true
+                            textFormat: TextEdit.PlainText
+                            font.pointSize: Style.fontSizeFormLabel
+                            font.family: root.monospaceFamily
+                            font.bold: true
+                            color: Style.formLabelColor
+                            selectionColor: Style.buttonFocusedBackgroundColor
+                            Layout.fillWidth: true
+                            activeFocusOnTab: false
+                            Accessible.ignored: true
+                        }
+
+                        FocusableText {
+                            id: hotspotPasswordLabel
+                            text: qsTr("Password:")
+                            font.pointSize: Style.fontSizeDescription
+                            font.family: Style.fontFamily
+                            color: Style.formLabelColor
+                            Accessible.name: text + " " + root.hotspotPassword
+                        }
+                        TextEdit {
+                            id: hotspotPasswordValue
+                            objectName: "hotspotPasswordValue"
+                            text: root.hotspotPassword
+                            readOnly: true
+                            selectByMouse: true
+                            selectByKeyboard: true
+                            textFormat: TextEdit.PlainText
+                            font.pointSize: Style.fontSizeFormLabel
+                            font.family: root.monospaceFamily
+                            font.bold: true
+                            color: Style.formLabelColor
+                            selectionColor: Style.buttonFocusedBackgroundColor
+                            Layout.fillWidth: true
+                            activeFocusOnTab: false
+                            Accessible.ignored: true
+                        }
+                    }
+
+                    FocusableText {
+                        id: hotspotHint
+                        objectName: "hotspotHint"
+                        text: qsTr("Scan this with the Gleem IRL app to set up the box, or join the network and open %1").arg("http://10.42.0.1/")
+                        font.pointSize: Style.fontSizeDescription
+                        font.family: Style.fontFamily
+                        color: Style.textDescriptionColor
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                    }
+
+                    FocusableText {
+                        id: hotspotReflashNote
+                        text: qsTr("Save or write them down now: they are not shown again, and writing the card again creates new ones.")
+                        font.pointSize: Style.fontSizeDescription
+                        font.family: Style.fontFamily
+                        color: Style.textDescriptionColor
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                    }
+
+                    RowLayout {
+                        spacing: Style.spacingSmall
+
+                        ImButton {
+                            id: savePngButton
+                            objectName: "hotspotSavePngButton"
+                            text: qsTr("Save as PNG")
+                            accessibleDescription: qsTr("Save the hotspot name, password and QR code as an image")
+                            activeFocusOnTab: true
+                            Layout.preferredHeight: Style.buttonHeightStandard
+                            onClicked: ImageWriterSingleton.saveGleemHotspotCard("png")
+                        }
+                        ImButton {
+                            id: savePdfButton
+                            objectName: "hotspotSavePdfButton"
+                            text: qsTr("Save as PDF")
+                            accessibleDescription: qsTr("Save the hotspot name, password and QR code as a printable PDF")
+                            activeFocusOnTab: true
+                            Layout.preferredHeight: Style.buttonHeightStandard
+                            onClicked: ImageWriterSingleton.saveGleemHotspotCard("pdf")
+                        }
+                    }
+                }
+            }
+
+            FocusableText {
+                id: hotspotDeviceNote
+                objectName: "hotspotDeviceNote"
+                visible: root.showHotspotDeviceNote
+                text: qsTr("The IRL Sidekick creates its own setup hotspot name and password on first boot. You will find them in its local interface.")
+                font.pointSize: Style.fontSizeDescription
+                font.family: Style.fontFamily
+                color: Style.textDescriptionColor
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                Layout.topMargin: Style.spacingSmall
+            }
+
             FocusableText {
                 id: ejectInstruction
                 visible: root.ejectApplicable
@@ -293,6 +467,8 @@ WizardStepBase {
             Layout.minimumWidth: Style.buttonWidthMinimum
             Layout.preferredHeight: Style.buttonHeightStandard
             onClicked: {
+                // The next card gets its own hotspot credentials; drop these.
+                ImageWriterSingleton.clearGleemHotspotCredentials()
                 // Return to storage selection to write the same image to another SD card
                 // This preserves device, OS, and customization settings
                 root.wizardContainer.resetToWriteStep()
@@ -321,6 +497,12 @@ WizardStepBase {
     
     // Focus management - rebuild when customization visibility changes
     onAnyCustomizationsAppliedChanged: rebuildFocusOrder()
+    onShowHotspotCredentialsChanged: rebuildFocusOrder()
+    onShowHotspotDeviceNoteChanged: rebuildFocusOrder()
+
+    // Leaving the screen (Write Another, Finish, the wizard being reset)
+    // destroys it: forget the hotspot credentials with it.
+    Component.onDestruction: ImageWriterSingleton.clearGleemHotspotCredentials()
     
     Component.onCompleted: {
         // Register choices section as first focus group
@@ -338,10 +520,18 @@ WizardStepBase {
             return items
         }, 1)
         
+        // The IRL Sidekick hotspot credentials, when there are any
+        registerFocusGroup("hotspot", function() {
+            if (hotspotSection.visible)
+                return [hotspotHeading, hotspotSsidLabel, hotspotPasswordLabel, hotspotHint,
+                        hotspotReflashNote, savePngButton, savePdfButton]
+            return hotspotDeviceNote.visible ? [hotspotDeviceNote] : []
+        }, 2)
+
         // Register eject instruction as third focus group
         registerFocusGroup("eject", function() {
             return ejectInstruction.visible ? [ejectInstruction] : []
-        }, 2)
+        }, 3)
         
         // Register custom buttons as fourth focus group
         registerFocusGroup("buttons", function() {
@@ -351,7 +541,7 @@ WizardStepBase {
             buttons.push(writeAnotherButton)
             buttons.push(finishButton)
             return buttons
-        }, 3)
+        }, 4)
         
         // Ensure focus order is built after custom buttons are fully instantiated
         Qt.callLater(function() {

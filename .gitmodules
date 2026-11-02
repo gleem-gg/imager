@@ -19,3 +19,6 @@
 [submodule "src/dependencies/vendor/libusb"]
 	path = src/dependencies/vendor/libusb
 	url = https://github.com/libusb/libusb.git
+[submodule "src/dependencies/vendor/qrcodegen"]
+	path = src/dependencies/vendor/qrcodegen
+	url = https://github.com/nayuki/QR-Code-generator.git

@@ -298,6 +298,11 @@ include(dependencies/yescrypt.cmake)
 # Bundled zlib
 include(dependencies/zlib.cmake)
 
+# Bundled QR Code generator (the IRL Sidekick hotspot QR code; GUI only)
+if(NOT BUILD_CLI_ONLY)
+    include(dependencies/qrcodegen.cmake)
+endif()
+
 # Bundled libarchive
 include(dependencies/libarchive.cmake)
 
@@ -364,14 +369,15 @@ set(SOURCES_BASE ${PLATFORM_SOURCES} "main.cpp"
     "disk_formatter.cpp" "bootimgcreator.cpp" "file_operations.cpp" "cachemanager.cpp" "systemmemorymanager.cpp" "imageadvancedoptions.cpp"
     "customization_generator.cpp" "platformhelper.cpp" "suspend_inhibitor.cpp" "secureboot.cpp" "secureboot_crypto_common.cpp" "asynccachewriter.cpp" "ringbuffer.cpp"
     "performancestats.cpp" "curlnetworkconfig.cpp" "curlfetcher.cpp" "writeprogresswatchdog.cpp"
-    "oslistparser.cpp" "imagesizeparser.cpp" "model_row_diff.cpp" "network_poll_action.cpp" "eeprom_repo_override.cpp")
+    "oslistparser.cpp" "imagesizeparser.cpp" "model_row_diff.cpp" "network_poll_action.cpp" "eeprom_repo_override.cpp"
+    "gleemhotspot.cpp")
 
 # Add GUI-specific sources only for non-CLI builds
 if(BUILD_CLI_ONLY)
     # CLI builds need imagewriter but not the GUI components
     set(SOURCES ${SOURCES_BASE} "imagewriter.cpp" "hwlistmodel.cpp" "oslistmodel.cpp")
 else()
-    set(SOURCES ${SOURCES_BASE} "qml.qrc" "nativefiledialog.cpp" "iconimageprovider.cpp" "iconmultifetcher.cpp")
+    set(SOURCES ${SOURCES_BASE} "qml.qrc" "nativefiledialog.cpp" "iconimageprovider.cpp" "iconmultifetcher.cpp" "gleemhotspotcard.cpp")
 endif()
 
 if(ENABLE_TEST_HOOKS)
@@ -680,6 +686,10 @@ else()
 endif()
 
 add_dependencies(${PROJECT_NAME} zlibstatic yescrypt usb-1.0-static)
+if(NOT BUILD_CLI_ONLY)
+    include_directories(${QRCODEGEN_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${QRCODEGEN_LIBRARIES})
+endif()
 include_directories(${CURL_INCLUDE_DIR} ${LibArchive_INCLUDE_DIR} ${LIBLZMA_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${ZSTD_INCLUDE_DIR} ${YESCRYPT_INCLUDE_DIR} ${LIBUSB_INCLUDE_DIR})
 
 # Link different Qt components based on build type

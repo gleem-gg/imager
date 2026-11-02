@@ -2682,6 +2682,12 @@ if(NOT BUILD_CLI_ONLY)
     # it means a framework added there cannot be forgotten here.
     target_link_libraries(rpi_imager_testable PUBLIC ${EXTRALIBS})
 
+    # The IRL Sidekick hotspot card draws its QR code with the bundled
+    # QR Code generator.
+    if(TARGET qrcodegen)
+        target_link_libraries(rpi_imager_testable PUBLIC qrcodegen)
+    endif()
+
     # customization_generator hashes passwords through the bundled yescrypt.
     if(TARGET yescrypt)
         target_link_libraries(rpi_imager_testable PUBLIC yescrypt)
@@ -2837,6 +2843,13 @@ endif()
     endif()
 
     rpi_discover_tests(cli_process_test)
+
+    # Gleem: the IRL Sidekick setup hotspot -- credentials, gleem-hotspot.conf,
+    # the QR code and the printable card.
+    add_executable(gleem_hotspot_test gleem_hotspot_test.cpp)
+    set_target_properties(gleem_hotspot_test PROPERTIES AUTOMOC ON)
+    target_link_libraries(gleem_hotspot_test PRIVATE Catch2::Catch2 rpi_imager_testable)
+    rpi_discover_tests(gleem_hotspot_test)
 
     # The picker models: same library, its own cases.
     add_executable(picker_models_test picker_models_test.cpp)
